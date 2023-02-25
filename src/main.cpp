@@ -40,7 +40,7 @@ int main(void)
         return -1;
     }
 
-    // load in png icon
+    /* Load png icon from current .exe dir */
     int imgW, imgH, imgCh;
 	unsigned char* data = stbi_load("cgui.png", &imgW, &imgH, &imgCh, 0);
     GLFWimage icon;
@@ -48,7 +48,7 @@ int main(void)
     icon.height = imgH;
     icon.pixels = data;
     glfwSetWindowIcon(window, 1, &icon);
-    stbi_image_free(data); //free img data
+    stbi_image_free(data);
     
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
@@ -62,6 +62,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        /* Background */
         glBegin(GL_QUADS);
         glColor3f(0.1f, 0.1f, 0.1f);
 		glVertex2f(-1.0f, -1.0f);
@@ -70,11 +71,22 @@ int main(void)
 		glVertex2f(1.0f, -1.0f);
 		glEnd();
 
-        glBegin(GL_TRIANGLES);
+
+        /* Start defining button here */
+        glBegin(GL_QUADS);
+        glColor3f(0.4f, 0.4f, 0.4f);
+        glVertex2f(-0.96f, 0.96f);
+        glVertex2f(-0.64f, 0.96f);
+        glVertex2f(-0.64f, 0.79f);
+        glVertex2f(-0.96f, 0.79f);
+        glEnd();
+
+        glBegin(GL_QUADS);
         glColor3f(0.4f, 0.4f, 0.9f);
-        glVertex2f(-0.5f, -0.5f);
-		glVertex2f(0.0f, 0.5f);
-		glVertex2f(0.5f, -0.5f);
+        glVertex2f(-0.95f, 0.95f);
+        glVertex2f(-0.65f, 0.95f);
+        glVertex2f(-0.65f, 0.8f);
+        glVertex2f(-0.95f, 0.8f);
 		glEnd();
 
         /* Swap front and back buffers */
