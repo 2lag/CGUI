@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../dependencies/stb_image.h"
 
-#define size 666
+#define size 500 //more consistent sizing ratio with normalized values for opengl coords
 
 //mouse detection
 void mouse_button_callback(GLFWwindow* window, int btn, int action, int mods) {
