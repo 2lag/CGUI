@@ -6,20 +6,30 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../dependencies/stb_image.h"
 
-#define size 500 //more consistent sizing ratio with normalized values for opengl coords
+#define size 500 /* More consistent sizing ratio with normalized values for opengl coords */
 
-//mouse detection
+/* Function to normalize current mouse X-position to 0-1 range */
+double normalizeX(double xpos) { return xpos / size; }
+double normalizeY(double ypos) { return ypos / size; }
+
+/* Function to denormalize curr mouse pos to 0-500 range */
+double denormalizeX(double xpos) { return xpos * size; }
+double denormalizeY(double ypos) { return ypos * size; }
+
+/* Mouse detection */
 void mouse_button_callback(GLFWwindow* window, int btn, int action, int mods) {
     if (btn == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
         system("cls");
         printf("left click @ { x: %0.f, y: %0.f }", xpos, ypos);
+		printf("\nnormalized @ { x: %0.2f, y: %0.2f }", normalizeX(xpos), normalizeY(ypos));
     } else if (btn == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 		system("cls");
 		printf("rite click @ { x: %0.f, y: %0.f }", xpos, ypos);
+		printf("\nnormalized @ { x: %0.2f, y: %0.2f }", normalizeX(xpos), normalizeY(ypos));
     }
 }
 
@@ -30,6 +40,9 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+
+    /* Disable resize */
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(size, size, "CGUI", NULL, NULL);
