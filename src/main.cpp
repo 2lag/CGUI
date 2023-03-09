@@ -7,65 +7,60 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../dependencies/stb_image.h"
 
+/* 
+    maybe restart and do classes for everything
+    would make everything much cleaner and organized
+*/
+
 /* Click detection */
 void mouse_button_callback(GLFWwindow* window, int btn, int action, int mods) {
     if (btn == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
         system("cls");
-        printf("left click @ { x: %0.0f, y: %0.0f }", xpos, ypos);
-		printf("\nnormalized @ { x: %0.2f, y: %0.2f }", mod::n(xpos), mod::n(ypos));
+        printf("left  @ { x: %0.0f, y: %0.0f }", xpos, ypos);
     } else if (btn == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
-		system("cls");
-		printf("rite click @ { x: %0.0f, y: %0.0f }", xpos, ypos);
-		printf("\nnormalized @ { x: %0.2f, y: %0.2f }", mod::n(xpos), mod::n(ypos));
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        system("cls");
+        printf("right @ { x: %0.0f, y: %0.0f }", xpos, ypos);
     }
 }
 
 /* Move detection */
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
     system("cls");
-    printf("mouse move @ { x:  %0.0f, y: %0.0f }", xpos, ypos);
-    printf("\nnormalized @ { x: %0.2f, y: %0.2f }", mod::n(xpos), mod::n(ypos));
+    printf("move  @ { x: %0.0f, y: %0.0f }", xpos, ypos);
 }
 
 struct RGB { int R, G, B; };
 void quad(int x, int y, int w, int h, RGB in, bool outline) {
-    if (outline) {
+    if (outline)
         quad(x - 2, y - 2, w + 4, h + 4, { 225, 102, 102 }, false);
-    }
+
     glBegin(GL_QUADS);
     glColor3f(mod::nC(in.R), mod::nC(in.G), mod::nC(in.B));
-
-    /*
-    FIX THESE BROKEN ASS VALUES ??? UNLESS IS N() ISSUE BUT THOUGHT I FIXED 
-    maybe remove the .5f's since changed the func defs? unsure hmm
-    */
-    glVertex2f(mod::n(x) + 0.5f, mod::n(y) + 0.5f);
-    glVertex2f(mod::n(x + w) + 0.5f, mod::n(y) + 0.5f);
-    glVertex2f(mod::n(x + w) + 0.5f, mod::n(y + h) + 0.5f);
-    glVertex2f(mod::n(x) + 0.5f, mod::n(y + h) + 0.5f);
+    glVertex2f(mod::n(x), mod::n(y));
+    glVertex2f(mod::n(x + w), mod::n(y));
+    glVertex2f(mod::n(x + w), mod::n(y + h));
+    glVertex2f(mod::n(x), mod::n(y + h));
     glEnd();
 }
 
 int main(void)
 {
-    GLFWwindow* window;
+    GLFWwindow* window; // Required
+    if (!glfwInit())
+        return -1; // Required
 
-    /* Initialize the library */
-    if (!glfwInit()) return -1;
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); /* Disable resize */
 
-    /* Disable resize */
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    /* Create a windowed mode window and its OpenGL context */
+    /* Create win & ogl context */
     window = glfwCreateWindow(canvaSz, canvaSz, "CGUI", NULL, NULL);
     
     if (!window) {
-        glfwTerminate();
-        return -1;
+        glfwTerminate(); // Required
+        return -1; // Required
     }
 
     /* Load png icon from current .exe dir */
@@ -75,8 +70,7 @@ int main(void)
     glfwSetWindowIcon(window, 1, &icon);
     stbi_image_free(data);
     
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window); // Required
 
     /* Register mouse movement & button callbacks */
     glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -84,29 +78,20 @@ int main(void)
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window)) {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT); // Required
 
         /* Background */
-        glBegin(GL_QUADS);
-        glColor3f(mod::nC(24), mod::nC(24), mod::nC(24));
-		glVertex2f(-1.0f, -1.0f);
-		glVertex2f(-1.0f, 1.0f);
-		glVertex2f(1.0f, 1.0f);
-		glVertex2f(1.0f, -1.0f);
-		glEnd();
+        quad(2, 2, canvaSz - 4, canvaSz - 4, { 24, 24, 24 }, true);
 
-        /* Start defining button here */
+        /* Start defining button here 
+        swap this to button function
         quad(0, 0, 50, 25, { 61, 61, 61 }, true);
+        */
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
+        glfwSwapBuffers(window); // Required
+        glfwPollEvents(); // Required
     }
-
-	glfwDestroyWindow(window);
-    glfwTerminate();
-    return 0;
+	glfwDestroyWindow(window); // Required
+    glfwTerminate(); // Required
+    return 0; // Required
 }
