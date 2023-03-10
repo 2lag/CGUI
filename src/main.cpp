@@ -34,7 +34,7 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 }
 
 struct RGB { int R, G, B; };
-void quad(int x, int y, int w, int h, RGB in, bool outline) {
+void quad(float x, float y, float w, float h, RGB in, bool outline) {
     if (outline)
         quad(x - 2, y - 2, w + 4, h + 4, { 225, 102, 102 }, false);
 
@@ -80,13 +80,14 @@ int main(void)
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT); // Required
 
-        /* Background */
-        quad(2, 2, canvaSz - 4, canvaSz - 4, { 24, 24, 24 }, true);
+        quad(2, 2, canvaSz - 4, canvaSz - 4, { 24, 24, 24 }, true); /* Background */
+        quad(2, mod::fY(2, 15), canvaSz - 4, 15, { 61, 61, 61 }, false); /* Bar */
 
         /* Start defining button here 
         swap this to button function
-        quad(0, 0, 50, 25, { 61, 61, 61 }, true);
+        quad(10, mod::fY(27, 25), 50, 25, { 61, 61, 61 }, true);
         */
+        /* find way to render text */
 
         glfwSwapBuffers(window); // Required
         glfwPollEvents(); // Required
