@@ -18,21 +18,15 @@
     <ClCompile Include="src\source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\dx\d3d_func.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\win\win_func.cpp">
+    <ClCompile Include="src\win_funcs\win_func.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\dx\d3d_func.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\typedef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\win\win_func.h">
+    <ClInclude Include="src\win_funcs\win_func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

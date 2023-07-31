@@ -1,20 +1,20 @@
-#include "win/win_func.h"
-#include "dx/d3d_func.h"
+#include "win_funcs/win_func.h"
 #include "typedef.h"
 
-// figure out how to disable scaling on resize
-// scale text as well with the dimensions/drawing
-
-// clean up all files to reduce process "weight"
-// add tps to bottom right
-// make text box blank by default
-// editable if clicked, disable anywhere else
-
-// work on menu bar, file, tool, etc
-// file ->
-//   new|open|save
-// tool ->
-//   macro
+/*
+  build out text box
+  build out top menu bar
+    add filler options
+      file -> new | open | save
+      tool -> macro | colors | 
+  add tps counter
+  add windows message handling ( WM_CREATE, WM_PAINT, etc ) if needed
+  implement menu bar shit
+  implement line nums and scrolling/scroll tracking
+  handle keyboard shortcuts
+  add font sizes & stuff like bold/italic/strikethru/etc
+  add syntax highlighting
+*/
 
 s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
                     _In_opt_ HINSTANCE p_inst ,
@@ -28,7 +28,7 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
     inst,
     0,
     LoadCursor( 0, IDC_ARROW ),
-    CreateSolidBrush( RGB( 24, 24, 24 ) ),
+    CreateSolidBrush( RGB( 32, 32, 32 ) ),
     L"type", L"type_class"
   };
 
@@ -51,8 +51,7 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
   );
 
   (void)ShowWindow( hwnd, cmdshow );
-
-  d3d_init( hwnd );
+  (void)UpdateWindow( hwnd );
 
   MSG msg;
   while( true ) {
@@ -63,11 +62,7 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
 
     if( msg.message == WM_QUIT )
       break;
-
-    d3d_render( hwnd );
   }
-
-  d3d_clean();
 
   return msg.wParam;
 }
