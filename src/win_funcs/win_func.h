@@ -7,4 +7,4 @@
 
 #include "../typedef.h"
 
-salt __stdcall wnd_proc(HWND hwnd, u32 msg, u32 wp, salt lp);
+LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp );
