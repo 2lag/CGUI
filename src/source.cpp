@@ -2,8 +2,8 @@
 #include "typedef.h"
 
 /*
-  build out text box
   build out top menu bar
+  build out text box
     add filler options
       file -> new | open | save
       tool -> macro | colors | 
