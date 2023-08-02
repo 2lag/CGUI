@@ -57,12 +57,12 @@ BEGIN
         MENUITEM "New",                         ID_FILE_NEW
         MENUITEM "Open",                        ID_FILE_OPEN
         MENUITEM "Save",                        ID_FILE_SAVE
-        MENUITEM SEPARATOR
         MENUITEM "Exit",                        ID_FILE_EXIT
     END
-    POPUP "Tools"
+    POPUP "Macro"
     BEGIN
-        MENUITEM "Macro",                       ID_TOOLS_MACRO
+        MENUITEM "Record",                      ID_MACRO_RECORD
+        MENUITEM "Playback",                    ID_MACRO_PLAYBACK
     END
 END
 

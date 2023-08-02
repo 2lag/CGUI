@@ -1,46 +1,10 @@
 #include "win_func.h"
 #include "../../resource.h"
 
-/* backup
-HMENU hmenu;
+// add hover detection
+// fix "double height menu bar"
+// figure out how to color rest of menu bar
 
-
-  case WM_PAINT: { // fix me
-    MENUINFO m_info{
-      sizeof( m_info ),
-      MIM_BACKGROUND | MIM_APPLYTOSUBMENUS | MIM_STYLE,
-      MNS_NOCHECK, 0,
-      CreateSolidBrush( RGB( 120, 110, 120 ) ),
-      0, 0
-    };
-
-    SetMenuInfo( hmenu, &m_info );
-  } break;
-
-    old wm create
-
-      hmenu = CreateMenu();
-    HMENU hfile = CreateMenu(),
-      htool = CreateMenu();
-
-    InsertMenuW( hfile, 0, MF_INSERT, 0, L"&New"  );
-    InsertMenuW( hfile, 1, MF_INSERT, 1, L"&Open" );
-    InsertMenuW( hfile, 2, MF_INSERT, 2, L"&Save" );
-    InsertMenuW( hfile, 3, MF_SEPARATOR, 3, nullptr );
-    InsertMenuW( hfile, 4, MF_INSERT, 4, L"&Exit" );
-
-    InsertMenuW( htool, 0, MF_INSERT, 0, L"&Macro" );
-
-    AppendMenuW( hmenu, MF_POPUP, (u32)hfile, L"&File" );
-    AppendMenuW( hmenu, MF_POPUP, (u32)htool, L"&Tool" );
-
-    // with MF_OWNERDRAW TO FULLY CUSTOMIZE IT
-
-    SetMenu( hwnd, hmenu );
-*/
-
-// https://coding-examples.com/c/mfc/mfc-owner-drawn-menu-using-wm_drawitem-wm_measureitem/
-// https://learn.microsoft.com/en-us/windows/win32/menurc/using-menus?redirectedfrom=MSDN#_win32_Owner_Drawn_Menus_and_the_WM_DRAWITEM_Message
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   static bool mload = false;
   switch( msg ) {
@@ -50,14 +14,20 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
       MAKEINTRESOURCEW( IDR_MENU )
     );
 
-    MENUINFO minfo{};
+    MENUITEMINFO minfo{};
     minfo.cbSize = sizeof( minfo );
-    minfo.fMask = MIM_STYLE | MIM_APPLYTOSUBMENUS;
-    minfo.dwStyle = MF_OWNERDRAW;
+    minfo.fMask = MIIM_TYPE;
+    minfo.fType = MFT_OWNERDRAW;
 
     SetMenu( hwnd, hmenu );
-    SetMenuInfo( hmenu, &minfo );
 
+    SetMenuItemInfoW( hmenu, ID_FILE_NEW   , 0, &minfo );
+    SetMenuItemInfoW( hmenu, ID_FILE_OPEN  , 0, &minfo );
+    SetMenuItemInfoW( hmenu, ID_FILE_SAVE  , 0, &minfo );
+    SetMenuItemInfoW( hmenu, ID_FILE_EXIT  , 0, &minfo );
+
+    SetMenuItemInfoW( hmenu, ID_MACRO_RECORD  , 0, &minfo );
+    SetMenuItemInfoW( hmenu, ID_MACRO_PLAYBACK, 0, &minfo );
   } break;
   case WM_DESTROY: {
     PostQuitMessage( 0 );
@@ -66,30 +36,46 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   case WM_DRAWITEM: {
     LPDRAWITEMSTRUCT lpdis = (LPDRAWITEMSTRUCT)lp;
     if( lpdis->CtlType == ODT_MENU ) {
-      HFONT hfont = (HFONT)GetStockObject( DEFAULT_GUI_FONT );
-      SelectObject( lpdis->hDC, hfont );
+      SelectObject( lpdis->hDC,
+        (HFONT)GetStockObject(
+          DEFAULT_GUI_FONT
+        )
+      );
 
-      HBRUSH brush_bg = CreateSolidBrush( RGB( 32, 32, 32 ) );
-      FillRect( lpdis->hDC, &lpdis->rcItem, brush_bg );
-      DeleteObject( brush_bg );
+      FillRect( lpdis->hDC, &lpdis->rcItem,
+        CreateSolidBrush( RGB( 32, 32, 32 ) )
+      );
+
+      SetTextColor( lpdis->hDC, RGB( 222, 222, 222 ) );
+      SetBkMode( lpdis->hDC, TRANSPARENT );
 
       switch( lpdis->itemID ) {
       case ID_FILE_NEW: {
-        DrawTextW( lpdis->hDC, L"&New", 3, &lpdis->rcItem, DT_CENTER | DT_VCENTER | DT_SINGLELINE );
+        TextOutW( lpdis->hDC, 20,  4, L"New"  , 3 );
       } break;
       case ID_FILE_OPEN: {
-
+        TextOutW( lpdis->hDC, 20, 23, L"Open" , 4 );
       } break;
       case ID_FILE_SAVE: {
-
+        TextOutW( lpdis->hDC, 20, 42, L"Save" , 4 );
       } break;
       case ID_FILE_EXIT: {
-
+        TextOutW( lpdis->hDC, 20, 61, L"Exit" , 4 );
       } break;
-      case ID_TOOLS_MACRO: {
-
+      case ID_MACRO_RECORD: {
+        TextOutW( lpdis->hDC, 10,  4, L"Record"  , 7 );
+      } break;
+      case ID_MACRO_PLAYBACK: {
+        TextOutW( lpdis->hDC, 10, 24, L"Playback", 8 );
       } break;
       }
+    }
+  } break;
+  case WM_MEASUREITEM: {
+    LPMEASUREITEMSTRUCT lpmis = (LPMEASUREITEMSTRUCT)lp;
+    if( lpmis->CtlType == ODT_MENU ) {
+      lpmis->itemWidth = 50;
+      lpmis->itemHeight = 20;
     }
   } break;
   }
