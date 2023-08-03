@@ -1,8 +1,8 @@
 #include "win_func.h"
 #include "../../resource.h"
 
-// add hover detection
-// fix "double height menu bar"
+// fix "double height menu bar" https://github.com/adzm/win32-custom-menubar-aero-theme
+// add hover detection https://github.com/tauri-apps/tao/issues/397
 // figure out how to color rest of menu bar
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
@@ -25,7 +25,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     SetMenuItemInfoW( hmenu, ID_FILE_OPEN  , 0, &minfo );
     SetMenuItemInfoW( hmenu, ID_FILE_SAVE  , 0, &minfo );
     SetMenuItemInfoW( hmenu, ID_FILE_EXIT  , 0, &minfo );
-
+    
     SetMenuItemInfoW( hmenu, ID_MACRO_RECORD  , 0, &minfo );
     SetMenuItemInfoW( hmenu, ID_MACRO_PLAYBACK, 0, &minfo );
   } break;
@@ -35,6 +35,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_DRAWITEM: {
     LPDRAWITEMSTRUCT lpdis = (LPDRAWITEMSTRUCT)lp;
+
     if( lpdis->CtlType == ODT_MENU ) {
       SelectObject( lpdis->hDC,
         (HFONT)GetStockObject(
