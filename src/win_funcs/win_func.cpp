@@ -1,33 +1,27 @@
 #include "win_func.h"
-#include "../../resource.h"
-
-// fix "double height menu bar" https://github.com/adzm/win32-custom-menubar-aero-theme
-// add hover detection https://github.com/tauri-apps/tao/issues/397
-// figure out how to color rest of menu bar
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   static bool mload = false;
   switch( msg ) {
   case WM_CREATE: {
-    HMENU hmenu = LoadMenuW(
-      GetModuleHandleW( nullptr ),
-      MAKEINTRESOURCEW( IDR_MENU )
-    );
+    HMENU hfile  = CreateMenu(),
+          hmacro = CreateMenu(),
+          hmenu  = CreateMenu();
 
-    MENUITEMINFO minfo{};
-    minfo.cbSize = sizeof( minfo );
-    minfo.fMask = MIIM_TYPE;
-    minfo.fType = MFT_OWNERDRAW;
+    AppendMenuW( hfile, MF_OWNERDRAW, 0, L"&New"  );
+    AppendMenuW( hfile, MF_OWNERDRAW, 1, L"&Open" );
+    AppendMenuW( hfile, MF_OWNERDRAW, 2, L"&Save" );
+    AppendMenuW( hfile, MF_OWNERDRAW | MF_SEPARATOR, 3, nullptr );
+    AppendMenuW( hfile, MF_OWNERDRAW, 4, L"&Exit" );
 
+    AppendMenuW( hmacro, MF_OWNERDRAW, 0, L"&Record"   );
+    AppendMenuW( hmacro, MF_OWNERDRAW, 1, L"&Playback" );
+
+    AppendMenuW( hmenu, MF_OWNERDRAW | MF_POPUP, (u32)hfile , L"File"  );
+    AppendMenuW( hmenu, MF_OWNERDRAW | MF_POPUP, (u32)hmacro, L"Macro" );
+    
     SetMenu( hwnd, hmenu );
 
-    SetMenuItemInfoW( hmenu, ID_FILE_NEW   , 0, &minfo );
-    SetMenuItemInfoW( hmenu, ID_FILE_OPEN  , 0, &minfo );
-    SetMenuItemInfoW( hmenu, ID_FILE_SAVE  , 0, &minfo );
-    SetMenuItemInfoW( hmenu, ID_FILE_EXIT  , 0, &minfo );
-    
-    SetMenuItemInfoW( hmenu, ID_MACRO_RECORD  , 0, &minfo );
-    SetMenuItemInfoW( hmenu, ID_MACRO_PLAYBACK, 0, &minfo );
   } break;
   case WM_DESTROY: {
     PostQuitMessage( 0 );
@@ -36,47 +30,28 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   case WM_DRAWITEM: {
     LPDRAWITEMSTRUCT lpdis = (LPDRAWITEMSTRUCT)lp;
 
-    if( lpdis->CtlType == ODT_MENU ) {
-      SelectObject( lpdis->hDC,
-        (HFONT)GetStockObject(
-          DEFAULT_GUI_FONT
-        )
-      );
+    SelectObject( lpdis->hDC,
+      (HFONT)GetStockObject(
+        DEFAULT_GUI_FONT
+      )
+    );
 
-      FillRect( lpdis->hDC, &lpdis->rcItem,
-        CreateSolidBrush( RGB( 32, 32, 32 ) )
-      );
+    FillRect( lpdis->hDC, &lpdis->rcItem,
+      CreateSolidBrush( RGB( 32, 32, 32 ) )
+    );
 
-      SetTextColor( lpdis->hDC, RGB( 222, 222, 222 ) );
-      SetBkMode( lpdis->hDC, TRANSPARENT );
+    SetTextColor( lpdis->hDC, RGB( 222, 222, 222 ) );
+    SetBkMode( lpdis->hDC, TRANSPARENT );
 
-      switch( lpdis->itemID ) {
-      case ID_FILE_NEW: {
-        TextOutW( lpdis->hDC, 20,  4, L"New"  , 3 );
-      } break;
-      case ID_FILE_OPEN: {
-        TextOutW( lpdis->hDC, 20, 23, L"Open" , 4 );
-      } break;
-      case ID_FILE_SAVE: {
-        TextOutW( lpdis->hDC, 20, 42, L"Save" , 4 );
-      } break;
-      case ID_FILE_EXIT: {
-        TextOutW( lpdis->hDC, 20, 61, L"Exit" , 4 );
-      } break;
-      case ID_MACRO_RECORD: {
-        TextOutW( lpdis->hDC, 10,  4, L"Record"  , 7 );
-      } break;
-      case ID_MACRO_PLAYBACK: {
-        TextOutW( lpdis->hDC, 10, 24, L"Playback", 8 );
-      } break;
-      }
-    }
+    TextOutW( lpdis->hDC, lpdis->rcItem.left + 20, lpdis->rcItem.top + 4, L"fuck", 4 );
+    // figure out how to differentiate various sub menus
+    // only thing so far is a switch with lpdis->itemID and that doesn't differentiate
   } break;
   case WM_MEASUREITEM: {
     LPMEASUREITEMSTRUCT lpmis = (LPMEASUREITEMSTRUCT)lp;
     if( lpmis->CtlType == ODT_MENU ) {
       lpmis->itemWidth = 50;
-      lpmis->itemHeight = 20;
+      lpmis->itemHeight = 25;
     }
   } break;
   }

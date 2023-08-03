@@ -175,12 +175,8 @@
     <ClCompile Include="src\win_funcs\win_func.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\typedef.h" />
     <ClInclude Include="src\win_funcs\win_func.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="type.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
