@@ -176,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\typedef.h" />
+    <ClInclude Include="src\win_funcs\menu_ids.h" />
     <ClInclude Include="src\win_funcs\win_func.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

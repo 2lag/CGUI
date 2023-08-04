@@ -1,19 +1,15 @@
 #include "win_funcs/win_func.h"
-#include "typedef.h"
 
 /*
-  build out top menu bar
-  build out text box
-    add filler options
-      file -> new | open | save
-      tool -> macro | colors | 
+  build out menu bar
   add tps counter
-  add windows message handling ( WM_CREATE, WM_PAINT, etc ) if needed
-  implement menu bar shit
+  build out text box using vectors ?
+    look at n++ methods
+  implement rest of menu bar funcs
   implement line nums and scrolling/scroll tracking
   handle keyboard shortcuts
   add font sizes & stuff like bold/italic/strikethru/etc
-  add syntax highlighting
+  add syntax highlighting for cpp ( language server ? )
 */
 
 s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
@@ -64,5 +60,5 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
       break;
   }
 
-  return msg.wParam;
+  return (s32)msg.wParam;
 }

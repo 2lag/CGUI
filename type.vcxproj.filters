@@ -29,5 +29,8 @@
     <ClInclude Include="src\win_funcs\win_func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\win_funcs\menu_ids.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
