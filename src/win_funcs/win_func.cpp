@@ -2,7 +2,11 @@
 #include "../../resource.h"
 
 // study this to make menu darkmode
+// https://learn.microsoft.com/en-us/answers/questions/893697/thrilled-to-have-dwmwa-use-immersive-dark-mode-for
 // https://github.com/komiyamma/win32-darkmode/tree/master
+
+// if worst case
+// https://stackoverflow.com/questions/53501268/win10-dark-theme-how-to-use-in-winapi
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   static bool mload = false;
@@ -13,24 +17,32 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
           hedit = CreatePopupMenu(),
          hmacro = CreatePopupMenu();
 
-    AppendMenuW( hfile, MF_STRING, IDM_FILE_NEW , L"New" ); // swap _STRING to _OWNERDRAW for all?
+    // remove corners with dwmsetwindowattribute to see if it applies to menus
+    // if so, ownerdraw one as a test and if you can get complete darkmode, keep going
+    // if not, custom draw menu bar with loop w/ struct info
+    // draw custom title bar as well when you're finished
+    AppendMenuW( hfile, MF_STRING, IDM_FILE_NEW , L"New" );
     AppendMenuW( hfile, MF_STRING, IDM_FILE_OPEN, L"Open" );
     AppendMenuW( hfile, MF_STRING, IDM_FILE_SAVE, L"Save" );
+    AppendMenuW( hfile, 0x000800L,             0, nullptr );
     AppendMenuW( hfile, MF_STRING, IDM_FILE_EXIT, L"Exit" );
 
-
+    AppendMenuW( hedit, MF_STRING, IDM_EDIT_UNDO      , L"Undo"       );
+    AppendMenuW( hedit, MF_STRING, IDM_EDIT_REDO      , L"Redo"       );
+    AppendMenuW( hedit, 0x000800L, 0                  , nullptr       );
     AppendMenuW( hedit, MF_STRING, IDM_EDIT_CUT       , L"Cut"        );
     AppendMenuW( hedit, MF_STRING, IDM_EDIT_COPY      , L"Copy"       );
     AppendMenuW( hedit, MF_STRING, IDM_EDIT_PASTE     , L"Paste"      );
+    AppendMenuW( hedit, 0x000800L, 0                  , nullptr       );
     AppendMenuW( hedit, MF_STRING, IDM_EDIT_SELECT_ALL, L"Select All" );
     AppendMenuW( hedit, MF_STRING, IDM_EDIT_FIND      , L"Find"       );
 
     AppendMenuW( hmacro, MF_STRING, IDM_MACRO_RECORD  , L"Record"   );
     AppendMenuW( hmacro, MF_STRING, IDM_MACRO_PLAYBACK, L"Playback" );
 
-    AppendMenuW( hmenu, MF_POPUP , (u64)hfile   , L"File"  );
     AppendMenuW( hmenu, MF_STRING, IDM_EDIT_UNDO, L"<-"    );
     AppendMenuW( hmenu, MF_STRING, IDM_EDIT_REDO, L"->"    );
+    AppendMenuW( hmenu, MF_POPUP , (u64)hfile   , L"File"  );
     AppendMenuW( hmenu, MF_POPUP , (u64)hedit   , L"Edit"  );
     AppendMenuW( hmenu, MF_POPUP , (u64)hmacro  , L"Macro" );
 
