@@ -1,15 +1,8 @@
 #include "win_func.h"
 #include "../../resource.h"
 
-// study these to make menu darkmode
-// https://github.com/notepad-plus-plus/notepad-plus-plus/blob/master/PowerEditor/src/DarkMode/
-// https://github.com/notepad-plus-plus/notepad-plus-plus/blob/dea388bf594df4934d41d86127ff949d96fd3dc9/PowerEditor/src/NppDarkMode.cpp#L771
-
-// menu ids ( search for these to figure out how to draw )
-// https://github.com/notepad-plus-plus/notepad-plus-plus/blob/master/PowerEditor/src/menuCmdID.h
-
-// found this
-// https://github.com/notepad-plus-plus/notepad-plus-plus/blob/dea388bf594df4934d41d86127ff949d96fd3dc9/PowerEditor/src/WinControls/ToolBar/ToolBar.cpp#L501
+// study this to make menu darkmode
+// https://github.com/komiyamma/win32-darkmode/tree/master
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   static bool mload = false;
@@ -35,11 +28,11 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     AppendMenuW( hmacro, MF_STRING, IDM_MACRO_RECORD  , L"Record"   );
     AppendMenuW( hmacro, MF_STRING, IDM_MACRO_PLAYBACK, L"Playback" );
 
-    AppendMenuW( hmenu, MF_POPUP , (u32)hfile   , L"File"  );
+    AppendMenuW( hmenu, MF_POPUP , (u64)hfile   , L"File"  );
     AppendMenuW( hmenu, MF_STRING, IDM_EDIT_UNDO, L"<-"    );
     AppendMenuW( hmenu, MF_STRING, IDM_EDIT_REDO, L"->"    );
-    AppendMenuW( hmenu, MF_POPUP , (u32)hedit   , L"Edit"  );
-    AppendMenuW( hmenu, MF_POPUP , (u32)hmacro  , L"Macro" );
+    AppendMenuW( hmenu, MF_POPUP , (u64)hedit   , L"Edit"  );
+    AppendMenuW( hmenu, MF_POPUP , (u64)hmacro  , L"Macro" );
 
     SetMenu( hwnd, hmenu );
   } break;
@@ -50,4 +43,3 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   }
   return DefWindowProcW( hwnd, msg, wp, lp );
 }
-

@@ -39,10 +39,17 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
     0, 0, inst, 0
   );
 
-  s32 show_dark = 1;
+  s32 show_dark = 1,
+      show_brdr = 1;
   (void)DwmSetWindowAttribute(
-    hwnd, 20,
+    hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
     &show_dark,
+    sizeof( s32 )
+  );
+
+  (void)DwmSetWindowAttribute(
+    hwnd, DWMWA_BORDER_COLOR,
+    &show_brdr,
     sizeof( s32 )
   );
 
