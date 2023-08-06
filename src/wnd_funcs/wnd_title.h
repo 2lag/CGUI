@@ -24,4 +24,6 @@ inline wnd_obj wnd_obj_create( RECT r, COLORREF col, bool hover ) {
 }
 
 void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz );
-void wnd_title_clicked_cls( HWND hwnd, POINT m_pos, RECT space );
+void wnd_title_clicked_cls( HWND hwnd, bool mouse_over );
+void wnd_title_clicked_max( HWND hwnd, bool mouse_over );
+void wnd_title_clicked_min( HWND hwnd, bool mouse_over );

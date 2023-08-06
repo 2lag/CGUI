@@ -30,9 +30,9 @@ void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz ) {
     if( idx == 3 )
       (void)TextOutW( hdc, obj[ idx ].r.right - 16, obj[ idx ].r.bottom - 20, L"X", 1 );
     else if( idx == 5 )
-      (void)TextOutW( hdc, obj[ idx ].r.right - 16, obj[ idx ].r.bottom - 20, L"O", 1 );
+      (void)TextOutW( hdc, obj[ idx ].r.right - 17, obj[ idx ].r.bottom - 20, L"O", 1 );
     else if( idx == 7 )
-      (void)TextOutW( hdc, obj[ idx ].r.right - 16, obj[ idx ].r.bottom - 24, L"_", 1 );
+      (void)TextOutW( hdc, obj[ idx ].r.right - 16, obj[ idx ].r.bottom - 25, L"_", 1 );
   }
   (void)TextOutW( hdc, 6, 4, L"Type", 4 );
 
@@ -42,7 +42,21 @@ void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz ) {
   (void)DeleteObject( b_hover );
 }
 
-void wnd_title_clicked_cls( HWND hwnd, POINT m_pos, RECT space  ) {
-  if( PtInRect( &space, m_pos ) )
+void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
+  if( mouse_over )
     ExitProcess( 0 );
+}
+
+void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
+  if( !mouse_over )
+    return;
+  
+  // build out functionality
+  // make pos/size not cover task bar
+  ShowWindow( hwnd, SW_MAXIMIZE );
+}
+
+void wnd_title_clicked_min( HWND hwnd, bool mouse_over ) {
+  if( mouse_over )
+    ShowWindow( hwnd, SW_MINIMIZE );
 }

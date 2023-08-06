@@ -1,7 +1,8 @@
 #include "wnd_funcs/wnd_func.h"
 
 /*
-  build out title bar
+  finish title bar
+  add resize functionality
   build out menu bar
   add tps counter
   build out text box using vectors ?

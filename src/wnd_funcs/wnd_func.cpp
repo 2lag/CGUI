@@ -5,8 +5,9 @@
 
 /*
   slim down current code with functions and other opts
-  build out title bar functions
-  remove title bar shit from source.cpp
+  build out the maximize title bar functions
+  remove title bar to-do stuf from source.cpp
+  add resize functionality
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
@@ -28,8 +29,14 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   case WM_LBUTTONDOWN: {
     wnd_drag_on( hwnd, { 0, 0, wnd_sz.right - 75, 25 }, m_pos );
 
-    wnd_title_clicked_cls( hwnd, m_pos, { wnd_sz.right - 25, 0, wnd_sz.right, 25 } );
+    RECT cls{ wnd_sz.right - 25, 0, wnd_sz.right - 00, 25 };
+    wnd_title_clicked_cls( hwnd, PtInRect( &cls, m_pos ) );
 
+    RECT max{ wnd_sz.right - 50, 0, wnd_sz.right - 25, 25 };
+    wnd_title_clicked_max( hwnd, PtInRect( &max, m_pos ) );
+    
+    RECT min{ wnd_sz.right - 75, 0, wnd_sz.right - 50, 25 };
+    wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );
 
     (void)InvalidateRect( hwnd, nullptr, false );
   } break;
