@@ -4,13 +4,14 @@
 #include "wnd_drag.h"
 
 /*
-  find out if you can fix title bar flicker
+  slim down current code with functions and other opts
   build out title bar functions
   remove title bar shit from source.cpp
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
 */
+
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   RECT wnd_sz;
@@ -26,13 +27,18 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_LBUTTONDOWN: {
     wnd_drag_on( hwnd, { 0, 0, wnd_sz.right - 75, 25 }, m_pos );
+
+    wnd_title_clicked_cls( hwnd, m_pos, { wnd_sz.right - 25, 0, wnd_sz.right, 25 } );
+
+
+    (void)InvalidateRect( hwnd, nullptr, false );
   } break;
   case WM_LBUTTONUP: {
     wnd_drag_off();
+    (void)InvalidateRect( hwnd, nullptr, false );
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
-    (void)InvalidateRect( hwnd, nullptr, false );
     return 0;
   } break;
   case WM_PAINT: {

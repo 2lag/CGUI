@@ -41,3 +41,8 @@ void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz ) {
 
   (void)DeleteObject( b_hover );
 }
+
+void wnd_title_clicked_cls( HWND hwnd, POINT m_pos, RECT space  ) {
+  if( PtInRect( &space, m_pos ) )
+    ExitProcess( 0 );
+}
