@@ -172,15 +172,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\source.cpp" />
-    <ClCompile Include="src\win_funcs\win_func.cpp" />
+    <ClCompile Include="src\wnd_funcs\wnd_drag.cpp" />
+    <ClCompile Include="src\wnd_funcs\wnd_title.cpp" />
+    <ClCompile Include="src\wnd_funcs\wnd_func.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="src\typedef.h" />
-    <ClInclude Include="src\win_funcs\win_func.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="type.rc" />
+    <ClInclude Include="src\wnd_funcs\wincludes.h" />
+    <ClInclude Include="src\wnd_funcs\wnd_drag.h" />
+    <ClInclude Include="src\wnd_funcs\wnd_func.h" />
+    <ClInclude Include="src\wnd_funcs\wnd_title.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="customme.bin" />

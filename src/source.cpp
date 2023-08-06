@@ -1,10 +1,10 @@
-#include "win_funcs/win_func.h"
+#include "wnd_funcs/wnd_func.h"
 
 /*
+  build out title bar
   build out menu bar
   add tps counter
   build out text box using vectors ?
-    look at n++ methods
   implement rest of menu bar funcs
   implement line nums and scrolling/scroll tracking
   handle keyboard shortcuts
@@ -32,25 +32,10 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
 
   HWND hwnd = CreateWindowExW( 0,
     L"type_class", L"type",
-    WS_OVERLAPPEDWINDOW,
-    CW_USEDEFAULT,
-    CW_USEDEFAULT,
+    WS_POPUPWINDOW,
+    100, 100,
     420, 420,
     0, 0, inst, 0
-  );
-
-  s32 show_dark = 1,
-      show_brdr = 1;
-  (void)DwmSetWindowAttribute(
-    hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
-    &show_dark,
-    sizeof( s32 )
-  );
-
-  (void)DwmSetWindowAttribute(
-    hwnd, DWMWA_BORDER_COLOR,
-    &show_brdr,
-    sizeof( s32 )
   );
 
   (void)ShowWindow( hwnd, cmdshow );
