@@ -4,17 +4,13 @@
 #include "wnd_drag.h"
 
 /*
-  fix title bar drag
-  remove debug shit
   find out if you can fix title bar flicker
   build out title bar functions
+  remove title bar shit from source.cpp
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
 */
-#ifdef _DEBUG
-#include <iostream>
-#endif
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   RECT wnd_sz;
@@ -22,13 +18,6 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   (void)GetClientRect( hwnd, &wnd_sz );
   (void)GetCursorPos( &m_pos );
   (void)ScreenToClient( hwnd, &m_pos );
-
-#ifdef _DEBUG;
-  (void)AllocConsole();
-  FILE* new_std;
-  (void)freopen_s( &new_std, "CONOUT$", "w", stdout );
-  std::cout << m_pos.x << " " << m_pos.y << std::endl;
-#endif
 
   switch( msg ) {
   case WM_DESTROY: {

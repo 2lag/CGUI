@@ -33,8 +33,6 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
       0, 0,
       SWP_NOSIZE | SWP_NOZORDER
     );
-    user_start.x += m_delta.x;
-    user_start.y += m_delta.y;
     return;
   }
   user_start.x = m_pos.x;
