@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="src\source.cpp" />
     <ClCompile Include="src\wnd_funcs\wnd_drag.cpp" />
+    <ClCompile Include="src\wnd_funcs\wnd_resize.cpp" />
     <ClCompile Include="src\wnd_funcs\wnd_title.cpp" />
     <ClCompile Include="src\wnd_funcs\wnd_func.cpp" />
   </ItemGroup>
@@ -181,6 +182,7 @@
     <ClInclude Include="src\wnd_funcs\wincludes.h" />
     <ClInclude Include="src\wnd_funcs\wnd_drag.h" />
     <ClInclude Include="src\wnd_funcs\wnd_func.h" />
+    <ClInclude Include="src\wnd_funcs\wnd_resize.h" />
     <ClInclude Include="src\wnd_funcs\wnd_title.h" />
   </ItemGroup>
   <ItemGroup>

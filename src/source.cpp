@@ -1,7 +1,6 @@
 #include "wnd_funcs/wnd_func.h"
 
 /*
-  finish title bar
   add resize functionality
   build out menu bar
   add tps counter

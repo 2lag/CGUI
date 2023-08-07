@@ -27,6 +27,9 @@
     <ClCompile Include="src\wnd_funcs\wnd_drag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\wnd_funcs\wnd_resize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\typedef.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\wnd_funcs\wnd_drag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wnd_funcs\wnd_resize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

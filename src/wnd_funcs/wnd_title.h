@@ -12,14 +12,14 @@ enum wnd_col {
 struct wnd_obj {
   RECT r;
   HBRUSH col;
-  bool hover;
+  bool next;
 };
 
-inline wnd_obj wnd_obj_create( RECT r, COLORREF col, bool hover ) {
+inline wnd_obj wnd_obj_create( RECT r, COLORREF col, bool next ) {
   wnd_obj obj;
   obj.r = r;
   obj.col = CreateSolidBrush( col );
-  obj.hover = hover;
+  obj.next = next;
   return obj;
 }
 
