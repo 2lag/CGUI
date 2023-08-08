@@ -31,16 +31,6 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     PostQuitMessage( 0 );
     return 0;
   } break;
-  case WM_GETMINMAXINFO: {
-    LPMINMAXINFO lpmmi = (LPMINMAXINFO)lp;
-    lpmmi->ptMaxPosition = {
-      0, 1
-    };
-    lpmmi->ptMaxSize = {
-      GetSystemMetrics( SM_CXFULLSCREEN ),
-      GetSystemMetrics( SM_CYFULLSCREEN ) + 22
-    };
-  } break;
   case WM_LBUTTONDOWN: {
     wnd_drag_on( hwnd, { 0, 0, wnd_sz.right - 75, 25 }, m_pos );
 
