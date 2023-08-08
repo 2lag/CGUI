@@ -8,3 +8,6 @@
 #ifdef _DEBUG
 #include <iostream>
 #endif
+
+extern RECT max_prev_sz;
+extern bool is_maxd;

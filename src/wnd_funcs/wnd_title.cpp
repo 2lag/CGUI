@@ -43,19 +43,48 @@ void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
   ExitProcess( 0 );
 }
 
+RECT max_prev_sz;
+bool is_maxd = false;
 void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
-  // make this work custom so itll work on non-primary monitors
-  // have static bool for is_maximized
-  // if !is_maximized
-  //   save static rect and point for size and location
-  //   then get current screen app is on, and size of working area ( screen - taskbar size if present )
-  //   change size/position
-  //   set is_maximized to true
-  // else
-  //   reset to previous size/position
-  (void)ShowWindow( hwnd, IsZoomed( hwnd ) ? SW_RESTORE : SW_MAXIMIZE );
+
+  static POINT prev_pos;
+  if( !is_maxd ) {
+    GetClientRect( hwnd, &max_prev_sz );
+    prev_pos = {
+      max_prev_sz.left,
+      max_prev_sz.top
+    };
+    ClientToScreen( hwnd, &prev_pos );
+
+    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+    MONITORINFO m_info;
+    m_info.cbSize = sizeof( m_info );
+    GetMonitorInfoW( c_mon, &m_info );
+    s32 m_width  = m_info.rcMonitor.right - m_info.rcMonitor.left,
+        m_height = m_info.rcWork.bottom - m_info.rcWork.top;
+
+    SetWindowPos( hwnd, 0,
+      m_info.rcMonitor.left,
+      m_info.rcMonitor.top,
+      m_width,
+      m_height,
+      SWP_NOZORDER
+    );
+
+    is_maxd = true;
+  } else {
+    SetWindowPos( hwnd, 0,
+      prev_pos.x,
+      prev_pos.y,
+      max_prev_sz.right - max_prev_sz.left,
+      max_prev_sz.bottom - max_prev_sz.top,
+      SWP_NOZORDER
+    );
+
+    is_maxd = false;
+  }
 }
 
 void wnd_title_clicked_min( HWND hwnd, bool mouse_over ) {

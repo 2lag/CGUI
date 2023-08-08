@@ -5,7 +5,7 @@
   add resize functionality
   build out menu bar
   add tps counter
-  build out text box using vectors ?
+  build out text box ( using vectors ? )
   implement rest of menu bar funcs
   implement line nums and scrolling/scroll tracking
   handle keyboard shortcuts

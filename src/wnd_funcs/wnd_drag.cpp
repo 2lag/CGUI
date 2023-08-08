@@ -28,19 +28,33 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     RECT r_wnd;
     (void)GetWindowRect( hwnd, &r_wnd );
 
-    (void)SetWindowPos( hwnd, 0,
-      r_wnd.left + m_delta.x,
-      r_wnd.top  + m_delta.y,
-      0, 0,
-      SWP_NOSIZE | SWP_NOZORDER
-    );
+    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+    MONITORINFO m_info;
+    m_info.cbSize = sizeof( m_info );
+    GetMonitorInfoW( c_mon, &m_info );
+    s32 wnd_szx = r_wnd.right - r_wnd.left,
+        wnd_szy = r_wnd.bottom - r_wnd.top,
+        m_szx = m_info.rcMonitor.right - m_info.rcMonitor.left,
+        m_szy = m_info.rcWork.bottom - m_info.rcWork.top;
 
-    // make this work custom so itll work properly
-    // store previous size before maximizing and pass between
-    // build out pseudocode/structure here first after fixing wnd_title.cpp stuff
-    if( IsZoomed( hwnd ) ) {
-      (void)ShowWindow( hwnd, SW_RESTORE );
+    u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
+    POINT wnd_pos = {
+      r_wnd.left + m_delta.x,
+      r_wnd.top  + m_delta.y
+    };
+    if( wnd_szx == m_szx && wnd_szy == m_szy ) {
+      swp_flags = SWP_NOZORDER;
+      is_maxd = false;
+      // fix window position by changing wnd_pos
     }
+
+
+    (void)SetWindowPos( hwnd, 0,
+      wnd_pos.x, wnd_pos.y,
+      max_prev_sz.right - max_prev_sz.left,
+      max_prev_sz.bottom - max_prev_sz.top,
+      swp_flags
+    );
     
     return;
   }

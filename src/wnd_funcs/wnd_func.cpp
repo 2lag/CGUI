@@ -5,12 +5,8 @@
 #include "wnd_resize.h"
 
 /*
-  fix wnd_title_clicked_max by making custom implementation
-  then do the same for wnd_drag when dragging as maximized window
-    restore to previous size and move window to drag under where it was initially dragged from
-  add resize functionality
-    if mouse is within 3/5 pixels of any edge & lmb clicked, do resize
-  remove debug shit
+  fix pos after maxd in wnd_drag.cpp
+  do wnd_resize.cpp
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
