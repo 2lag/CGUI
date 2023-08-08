@@ -18,3 +18,5 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
 
 // create wnd_resize_on in WM_MOUSEMOVE
 // toggles user_resizing based off of m_pos listed above
+
+// add function for if titlebar clicked twice, maximize/minimize depending on IsZoomed

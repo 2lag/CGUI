@@ -18,7 +18,7 @@ void wnd_drag_off() {
   }
 }
 
-void wnd_drag( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
+void wnd_drag( HWND hwnd, POINT m_pos ) {
   if( user_dragging ) {
     POINT m_delta {
       m_pos.x - duser_start.x,
@@ -27,20 +27,6 @@ void wnd_drag( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
 
     RECT r_wnd;
     (void)GetWindowRect( hwnd, &r_wnd );
-    // static bool was_maxed = false;
-    // if isZoomed || was_maxed
-    //   was_maxed = true;
-    //   m_pos.x / r_wmd.right - r_wnd.left for %
-    //   ShowWindow SW_RESTORE
-    //   get new size pixels (2nd getwindowrect)
-    //   mutliply the .right by the var we got above
-    //   setwindowpos
-    //   return;
-    // }
-    // was_maxed = false; maybe put this outside the user_dragging if statement if this doesn't work
-    // so itll run everytime and for the entire time youre dragging after being maximized
-    //   add early return to avoid conflicts
-    // the y is fine
 
     (void)SetWindowPos( hwnd, 0,
       r_wnd.left + m_delta.x,
@@ -49,6 +35,13 @@ void wnd_drag( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
       SWP_NOSIZE | SWP_NOZORDER
     );
 
+    // make this work custom so itll work properly
+    // store previous size before maximizing and pass between
+    // build out pseudocode/structure here first after fixing wnd_title.cpp stuff
+    if( IsZoomed( hwnd ) ) {
+      (void)ShowWindow( hwnd, SW_RESTORE );
+    }
+    
     return;
   }
   duser_start.x = m_pos.x;

@@ -4,3 +4,7 @@
 #include <windowsx.h>
 #include   <dwmapi.h>
 #pragma comment( lib, "dwmapi" )
+
+#ifdef _DEBUG
+#include <iostream>
+#endif

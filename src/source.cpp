@@ -1,6 +1,7 @@
 #include "wnd_funcs/wnd_func.h"
 
 /*
+  complete wnd_func.cpp bugs
   add resize functionality
   build out menu bar
   add tps counter

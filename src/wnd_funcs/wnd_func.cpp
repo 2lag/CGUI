@@ -1,10 +1,13 @@
 #include "wnd_func.h"
-
+// combine these in= win_feats.h or smthn for cleanliness
 #include "wnd_drag.h"
 #include "wnd_title.h"
 #include "wnd_resize.h"
 
 /*
+  fix wnd_title_clicked_max by making custom implementation
+  then do the same for wnd_drag when dragging as maximized window
+    restore to previous size and move window to drag under where it was initially dragged from
   add resize functionality
     if mouse is within 3/5 pixels of any edge & lmb clicked, do resize
   remove debug shit
@@ -12,10 +15,6 @@
   build out menu bar functions
   then go back to source.cpp todo list
 */
-
-#ifdef _DEBUG
-#include <iostream>
-#endif
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   RECT wnd_sz;
@@ -25,9 +24,9 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   (void)ScreenToClient( hwnd, &m_pos );
 
 #ifdef _DEBUG
-  AllocConsole();
+  (void)AllocConsole();
   FILE* new_std;
-  freopen_s( &new_std, "CONOUT$", "w", stdout );
+  (void)freopen_s( &new_std, "CONOUT$", "w", stdout );
   std::cout << m_pos.x << " " << m_pos.y << std::endl;
 #endif
 
@@ -37,7 +36,6 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     return 0;
   } break;
   case WM_GETMINMAXINFO: {
-    // clean this up as well, maybe put in wnd_title ?
     LPMINMAXINFO lpmmi = (LPMINMAXINFO)lp;
     lpmmi->ptMaxPosition = {
       0, 1
@@ -63,7 +61,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     wnd_drag_off();
   } break;
   case WM_MOUSEMOVE: {
-    wnd_drag( hwnd, m_pos, wnd_sz );
+    wnd_drag( hwnd, m_pos );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;
