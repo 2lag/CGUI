@@ -1,7 +1,7 @@
 #include "wnd_resize.h"
 
 bool user_resizing = false;
-POINT user_start{};
+POINT ruser_start{};
 
 void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   // if user_resizing, do resize
