@@ -50,10 +50,11 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   if( wnd_szx == m_szx && wnd_szy == m_szy ) {
     swp_flags = SWP_NOZORDER;
     is_maxd = false;
-    // fix calculation for more-correct positioning
-    f32 wnd_xper = (f32)m_delta.x / (f32)m_szx;
-    wnd_pos.x = m_pos.x - (salt)( (f32)wnd_szx * wnd_xper );
-    duser_start.x = !( m_pos.x - (salt)( (f32)wnd_szx * wnd_xper ) );
+
+    f32 wnd_xper = (f32)m_pos.x / (f32)wnd_szx;
+    s32 nwnd_szx = max_prev_sz.right - max_prev_sz.left;
+    wnd_pos.x = (salt)( (f32)nwnd_szx * wnd_xper );
+    duser_start.x = (salt)( (f32)nwnd_szx * wnd_xper );
   }
 
   (void)SetWindowPos( hwnd, 0,
@@ -63,3 +64,6 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     swp_flags
   );
 }
+
+// add functionality for maximizing window by dragging it to the top and letting go ( maybe call in lmb up ? )
+// also half sizing dragging it to middle of either side

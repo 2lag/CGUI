@@ -5,7 +5,7 @@
 #include "wnd_resize.h"
 
 /*
-  fix pos after maxd in wnd_drag.cpp
+  finish drag functionality
   do wnd_resize.cpp
   make custom menu bar
   build out menu bar functions
