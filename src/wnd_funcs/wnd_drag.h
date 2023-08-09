@@ -6,3 +6,4 @@
 void wnd_drag_on( HWND hwnd, RECT title_bar, POINT m_pos );
 void wnd_drag_off();
 void wnd_drag( HWND hwnd, POINT m_pos );
+void wnd_drag_max( HWND hwnd, POINT m_pos );

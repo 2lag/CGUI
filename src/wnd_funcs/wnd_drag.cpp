@@ -33,13 +33,13 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   (void)GetWindowRect( hwnd, &r_wnd );
 
   HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-  MONITORINFO m_info;
-  m_info.cbSize = sizeof( m_info );
-  (void)GetMonitorInfoW( c_mon, &m_info );
+  MONITORINFO i_mon;
+  i_mon.cbSize = sizeof( i_mon );
+  (void)GetMonitorInfoW( c_mon, &i_mon );
   s32 wnd_szx = r_wnd.right - r_wnd.left,
       wnd_szy = r_wnd.bottom - r_wnd.top,
-      m_szx = m_info.rcMonitor.right - m_info.rcMonitor.left,
-      m_szy = m_info.rcWork.bottom - m_info.rcWork.top;
+      m_szx = i_mon.rcMonitor.right - i_mon.rcMonitor.left,
+      m_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
 
   u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
   POINT wnd_pos = {
@@ -52,9 +52,8 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     is_maxd = false;
 
     f32 wnd_xper = (f32)m_pos.x / (f32)wnd_szx;
-    s32 nwnd_szx = max_prev_sz.right - max_prev_sz.left;
-    wnd_pos.x = (salt)( (f32)nwnd_szx * wnd_xper );
-    duser_start.x = (salt)( (f32)nwnd_szx * wnd_xper );
+    salt nwnd_szx = max_prev_sz.right - max_prev_sz.left;
+    wnd_pos.x = duser_start.x = (salt)( (f32)nwnd_szx * wnd_xper );
   }
 
   (void)SetWindowPos( hwnd, 0,
@@ -64,6 +63,29 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     swp_flags
   );
 }
+/* fix conflict where if you drag out of being max'd from drag_max, it will bug out and teleport window off-screen */
+void wnd_drag_max( HWND hwnd, POINT m_pos ) {
+  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+  MONITORINFO i_mon;
+  i_mon.cbSize = sizeof( i_mon );
+  (void)GetMonitorInfoW( c_mon, &i_mon );
+  POINT sm_pos = m_pos;
+  (void)ClientToScreen( hwnd, &sm_pos );
+  salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
+       mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+  bool within_range = ( sm_pos.y <= i_mon.rcWork.top &&
+                        sm_pos.x > salt( (f32)mon_szx * 0.333f ) &&
+                        sm_pos.x < salt( (f32)mon_szx * 0.666f ) );
+  if( within_range ) {
+    is_maxd = true;
+    (void)SetWindowPos( hwnd, 0,
+      i_mon.rcWork.left,
+      i_mon.rcWork.top,
+      mon_szx, mon_szy,
+      SWP_NOZORDER
+    );
+  }
+}
 
-// add functionality for maximizing window by dragging it to the top and letting go ( maybe call in lmb up ? )
-// also half sizing dragging it to middle of either side
+// also add half sizing dragging it to middle of either side ( same call location )
+// also do top and bottom i guess for vertical monitors

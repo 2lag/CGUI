@@ -5,8 +5,10 @@
 #include "wnd_resize.h"
 
 /*
-  finish drag functionality
+  finish new drag functionality
+  void out all missed funcs
   do wnd_resize.cpp
+  voit out all missed funcs
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
@@ -44,6 +46,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     wnd_resize( hwnd, m_pos, wnd_sz );
   } break;
   case WM_LBUTTONUP: {
+    wnd_drag_max( hwnd, m_pos );
     wnd_drag_off();
   } break;
   case WM_MOUSEMOVE: {
