@@ -63,14 +63,20 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     swp_flags
   );
 }
-/* fix conflict where if you drag out of being max'd from drag_max, it will bug out and teleport window off-screen */
+
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
   (void)GetMonitorInfoW( c_mon, &i_mon );
-  POINT sm_pos = m_pos;
-  (void)ClientToScreen( hwnd, &sm_pos );
+  POINT sm_pos;
+  GetCursorPos( &sm_pos );
+
+  // if screen mouse pos x/y is > work size, subtract work size
+  // if less than, add the work size
+
+  // ^ this may be wrong, confirm by drawing ^
+
   salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
        mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
   bool within_range = ( sm_pos.y <= i_mon.rcWork.top &&
