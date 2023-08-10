@@ -65,25 +65,29 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
 }
 
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {
-  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-  MONITORINFO i_mon;
-  i_mon.cbSize = sizeof( i_mon );
-  (void)GetMonitorInfoW( c_mon, &i_mon );
   POINT sm_pos;
   GetCursorPos( &sm_pos );
 
-  // if screen mouse pos x/y is > work size, subtract work size
-  // if less than, add the work size
-
-  // ^ this may be wrong, confirm by drawing ^
-
+  HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
+  MONITORINFO i_mon;
+  i_mon.cbSize = sizeof( i_mon );
+  (void)GetMonitorInfoW( c_mon, &i_mon );
   salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
        mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+
+  // figure out how to make it work across multiple monitors
+  // its getting the proper size
+  // the issue lies with sm_pos
+
   bool within_range = ( sm_pos.y <= i_mon.rcWork.top &&
-                        sm_pos.x > salt( (f32)mon_szx * 0.333f ) &&
-                        sm_pos.x < salt( (f32)mon_szx * 0.666f ) );
+                        sm_pos.x > salt( (f32)mon_szx * 0.2f ) &&
+                        sm_pos.x < salt( (f32)mon_szx * 0.8f ) );
+
   if( within_range ) {
     is_maxd = true;
+
+    GetClientRect( hwnd, &max_prev_sz );
+
     (void)SetWindowPos( hwnd, 0,
       i_mon.rcWork.left,
       i_mon.rcWork.top,
