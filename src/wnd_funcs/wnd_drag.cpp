@@ -38,7 +38,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   (void)GetMonitorInfoW( c_mon, &i_mon );
   s32 wnd_szx = r_wnd.right - r_wnd.left,
       wnd_szy = r_wnd.bottom - r_wnd.top,
-      m_szx = i_mon.rcMonitor.right - i_mon.rcMonitor.left,
+      m_szx = i_mon.rcWork.right - i_mon.rcWork.left,
       m_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
 
   u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
@@ -63,30 +63,50 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     swp_flags
   );
 }
-
+// fix bug w/ pressin max button out of dragged max on side screens
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   POINT sm_pos;
-  GetCursorPos( &sm_pos );
+  (void)GetCursorPos( &sm_pos );
 
   HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
+  static HMONITOR pc_mon = nullptr;
+  static RECT pm_rect{};
+
+  if( c_mon != pc_mon ) {
+    MONITORINFO i_mon;
+    i_mon.cbSize = sizeof( i_mon );
+    (void)GetMonitorInfoW( c_mon, &i_mon );
+
+    if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
+      pm_rect = i_mon.rcWork;
+      pc_mon = c_mon;
+    }
+  }
+
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
-  (void)GetMonitorInfoW( c_mon, &i_mon );
+  (void)GetMonitorInfoW( pc_mon, &i_mon );
   salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
-       mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+      pmon_szx = pm_rect.right - pm_rect.left,
+       mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top,
+      pmon_szy = pm_rect.bottom - pm_rect.top;
 
-  // figure out how to make it work across multiple monitors
-  // its getting the proper size
-  // the issue lies with sm_pos
+  salt sm_pos_adj;
+  if( sm_pos.x < 0 )
+    sm_pos_adj = sm_pos.x + pmon_szx;
+  else if( sm_pos.x > pmon_szx )
+    sm_pos_adj = sm_pos.x - ( pm_rect.right - mon_szx );
+  else
+    sm_pos_adj = sm_pos.x;
 
   bool within_range = ( sm_pos.y <= i_mon.rcWork.top &&
-                        sm_pos.x > salt( (f32)mon_szx * 0.2f ) &&
-                        sm_pos.x < salt( (f32)mon_szx * 0.8f ) );
+                        sm_pos_adj > salt( (f32)mon_szx * 0.2f ) &&
+                        sm_pos_adj < salt( (f32)mon_szx * 0.8f ) );
 
   if( within_range ) {
     is_maxd = true;
 
-    GetClientRect( hwnd, &max_prev_sz );
+    (void)GetClientRect( hwnd, &max_prev_sz );
 
     (void)SetWindowPos( hwnd, 0,
       i_mon.rcWork.left,
