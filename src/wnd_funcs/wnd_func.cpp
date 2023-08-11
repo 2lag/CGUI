@@ -43,7 +43,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     wnd_title_clicked_max( hwnd, PtInRect( &max, m_pos ) );
     wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );
 
-    //wnd_resize( hwnd, m_pos, wnd_sz );
+    wnd_resize( hwnd, m_pos, wnd_sz );
   } break;
   case WM_LBUTTONUP: {
     wnd_drag_max( hwnd, m_pos );

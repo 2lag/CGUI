@@ -6,7 +6,7 @@ POINT duser_start{};
 void wnd_drag_on( HWND hwnd, RECT title_bar, POINT m_pos ) {
   if( PtInRect( &title_bar, duser_start ) ) {
     user_dragging = true;
-    duser_start = { m_pos.x, m_pos.y };
+    duser_start = m_pos;
     (void)SetCapture( hwnd );
   }
 }
