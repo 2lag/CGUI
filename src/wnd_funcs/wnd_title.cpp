@@ -62,28 +62,47 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
     MONITORINFO m_info;
     m_info.cbSize = sizeof( m_info );
     GetMonitorInfoW( c_mon, &m_info );
-    s32 m_width  = m_info.rcMonitor.right - m_info.rcMonitor.left,
+    s32 m_width  = m_info.rcWork.right - m_info.rcWork.left,
         m_height = m_info.rcWork.bottom - m_info.rcWork.top;
 
+    is_maxd = true;
+
     SetWindowPos( hwnd, 0,
-      m_info.rcMonitor.left,
-      m_info.rcMonitor.top,
+      m_info.rcWork.left,
+      m_info.rcWork.top,
       m_width,
       m_height,
       SWP_NOZORDER
     );
-
-    is_maxd = true;
   } else {
+    is_maxd = false;
+
+    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+    MONITORINFO i_mon;
+    i_mon.cbSize = sizeof( i_mon );
+    (void)GetMonitorInfoW( c_mon, &i_mon );
+    salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
+         mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+
+    RECT r_wnd;
+    GetClientRect( hwnd, &r_wnd );
+    salt wnd_szx = max_prev_sz.right - max_prev_sz.left,
+         wnd_szy = max_prev_sz.bottom - max_prev_sz.top;
+
+    if( prev_pos.x == 0 || prev_pos.y == 0 ) {
+      prev_pos = {
+        ( mon_szx / 2 ) - ( wnd_szx / 2 ),
+        ( mon_szy / 2 ) - ( wnd_szy / 2 )
+      };
+    }
+
     SetWindowPos( hwnd, 0,
       prev_pos.x,
       prev_pos.y,
-      max_prev_sz.right - max_prev_sz.left,
-      max_prev_sz.bottom - max_prev_sz.top,
+      wnd_szx,
+      wnd_szy,
       SWP_NOZORDER
     );
-
-    is_maxd = false;
   }
 }
 

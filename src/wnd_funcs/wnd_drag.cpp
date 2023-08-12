@@ -49,11 +49,10 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
 
   if( wnd_szx == m_szx && wnd_szy == m_szy ) {
     swp_flags = SWP_NOZORDER;
-    is_maxd = false;
-
     f32 wnd_xper = (f32)m_pos.x / (f32)wnd_szx;
     salt nwnd_szx = max_prev_sz.right - max_prev_sz.left;
     wnd_pos.x = duser_start.x = (salt)( (f32)nwnd_szx * wnd_xper );
+    is_maxd = false;
   }
 
   (void)SetWindowPos( hwnd, 0,
@@ -64,6 +63,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   );
 }
 // fix bug w/ pressin max button out of dragged max on side screens
+// also fix size not resetting when dragged out of maximize for some mf reason :|
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   POINT sm_pos;
   (void)GetCursorPos( &sm_pos );

@@ -25,7 +25,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   (void)AllocConsole();
   FILE* new_std;
   (void)freopen_s( &new_std, "CONOUT$", "w", stdout );
-  std::cout << m_pos.x << " " << m_pos.y << std::endl;
+  //std::cout << m_pos.x << " " << m_pos.y << std::endl;
 #endif
 
   switch( msg ) {
