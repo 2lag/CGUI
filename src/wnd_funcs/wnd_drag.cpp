@@ -9,7 +9,7 @@ void wnd_drag_on( HWND hwnd, RECT title_bar, POINT m_pos ) {
     duser_start = m_pos;
     (void)SetCapture( hwnd );
   }
-}
+} 
 
 void wnd_drag_off() {
   if( user_dragging ) {
@@ -62,6 +62,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     swp_flags
   );
 }
+// ( not having this issue on laptop rm if fixed on pc )
 // fix bug w/ pressin max button out of dragged max on side screens
 // also fix size not resetting when dragged out of maximize for some mf reason :|
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {

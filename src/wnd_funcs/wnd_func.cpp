@@ -20,6 +20,9 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   (void)GetClientRect( hwnd, &wnd_sz );
   (void)GetCursorPos( &m_pos );
   (void)ScreenToClient( hwnd, &m_pos );
+  
+  bool in_r_threshold = m_pos.x <= 2 || m_pos.x >= wnd_sz.right - 2 ||
+                        m_pos.y <= 2 || m_pos.y >= wnd_sz.bottom - 2;
 
 #ifdef _DEBUG
   (void)AllocConsole();
@@ -34,7 +37,10 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     return 0;
   } break;
   case WM_LBUTTONDOWN: {
-    wnd_drag_on( hwnd, { 0, 0, wnd_sz.right - 75, 25 }, m_pos );
+    if( in_r_threshold )
+      wnd_resize_on( hwnd, m_pos, in_r_threshold );
+
+    wnd_drag_on( hwnd, { 0, 2, wnd_sz.right - 75, 25 }, m_pos );
 
     RECT cls{ wnd_sz.right - 25, 0, wnd_sz.right - 00, 25 };
     RECT max{ wnd_sz.right - 50, 0, wnd_sz.right - 25, 25 };
@@ -42,15 +48,15 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     wnd_title_clicked_cls( hwnd, PtInRect( &cls, m_pos ) );
     wnd_title_clicked_max( hwnd, PtInRect( &max, m_pos ) );
     wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );
-
-    wnd_resize( hwnd, m_pos, wnd_sz );
   } break;
   case WM_LBUTTONUP: {
     wnd_drag_max( hwnd, m_pos );
     wnd_drag_off();
+    wnd_resize_off();
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
+    wnd_resize( hwnd, m_pos, wnd_sz );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;
