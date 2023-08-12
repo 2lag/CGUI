@@ -21,17 +21,9 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   (void)GetCursorPos( &m_pos );
   (void)ScreenToClient( hwnd, &m_pos );
   
-  s32 d_side;
-  if( m_pos.x <= 2 )
-    d_side = 4;
-  else if( m_pos.x >= wnd_sz.right - 2 )
-    d_side = 2;
-  else if( m_pos.y <= 2 )
-    d_side = 1;
-  else if( m_pos.y >= wnd_sz.bottom - 2 )
-    d_side = 3;
-  else
-    d_side = 0;
+  // make side stay if unchanged so it stops tweaking
+  s32 d_side{};
+  wnd_resize_get_side( d_side, m_pos, wnd_sz );
 
 #ifdef _DEBUG
   (void)AllocConsole();

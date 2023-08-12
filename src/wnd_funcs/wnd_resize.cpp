@@ -1,5 +1,18 @@
 #include "wnd_resize.h"
 
+void wnd_resize_get_side( s32 &d_side, POINT m_pos, RECT wnd_sz ) {
+  if( m_pos.x <= 2 )
+    d_side = 4;
+  else if( m_pos.x >= wnd_sz.right - 2 )
+    d_side = 2;
+  else if( m_pos.y <= 2 )
+    d_side = 1;
+  else if( m_pos.y >= wnd_sz.bottom - 2 )
+    d_side = 3;
+  else
+    d_side = 0;
+}
+
 bool user_resizing = false;
 POINT ruser_start{};
 
@@ -19,6 +32,9 @@ void wnd_resize_off( ) {
 }
 
 void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
+  if( !d_side )
+    return;
+
   if( !user_resizing ) {
     ruser_start = m_pos;
     return;
