@@ -21,8 +21,17 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   (void)GetCursorPos( &m_pos );
   (void)ScreenToClient( hwnd, &m_pos );
   
-  bool in_r_threshold = m_pos.x <= 2 || m_pos.x >= wnd_sz.right - 2 ||
-                        m_pos.y <= 2 || m_pos.y >= wnd_sz.bottom - 2;
+  s32 d_side;
+  if( m_pos.x <= 2 )
+    d_side = 4;
+  else if( m_pos.x >= wnd_sz.right - 2 )
+    d_side = 2;
+  else if( m_pos.y <= 2 )
+    d_side = 1;
+  else if( m_pos.y >= wnd_sz.bottom - 2 )
+    d_side = 3;
+  else
+    d_side = 0;
 
 #ifdef _DEBUG
   (void)AllocConsole();
@@ -37,8 +46,8 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     return 0;
   } break;
   case WM_LBUTTONDOWN: {
-    if( in_r_threshold )
-      wnd_resize_on( hwnd, m_pos, in_r_threshold );
+    if( d_side )
+      wnd_resize_on( hwnd, m_pos, d_side );
 
     wnd_drag_on( hwnd, { 0, 2, wnd_sz.right - 75, 25 }, m_pos );
 
@@ -56,7 +65,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
-    wnd_resize( hwnd, m_pos, wnd_sz );
+    wnd_resize( hwnd, m_pos, wnd_sz, d_side );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;
