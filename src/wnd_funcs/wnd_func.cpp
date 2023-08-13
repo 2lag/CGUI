@@ -57,7 +57,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
-    wnd_resize( hwnd, m_pos, wnd_sz, d_side );
+    wnd_resize( hwnd, m_pos, d_side );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;

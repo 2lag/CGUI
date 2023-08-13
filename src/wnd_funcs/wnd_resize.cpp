@@ -31,14 +31,15 @@ void wnd_resize_off( ) {
   }
 }
 
-void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
+void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) { // make edge stick to cursor better
   if( !d_side )
+    ruser_start = m_pos;
+
+  if( !user_resizing )
     return;
 
-  if( !user_resizing ) {
-    ruser_start = m_pos;
-    return;
-  }
+  RECT wnd_sz{};
+  GetClientRect( hwnd, &wnd_sz );
 
   POINT wnd_pos {
     wnd_sz.left - 1,
@@ -63,8 +64,7 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
   if( d_side == 2 ) {
     wnd_szx += m_delta.x;
   }
-  // figure out how to make d_side stick around
-  //   so it doesnt toggle off if dragged outside the zone when already dragging
+
   SetWindowPos( hwnd, 0,
     wnd_pos.x, wnd_pos.y,
     wnd_szx, wnd_szy,
