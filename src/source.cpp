@@ -1,9 +1,9 @@
 #include "wnd_funcs/wnd_func.h"
 
 /*
-  complete wnd_func.cpp bugs
-  add resize functionality
-  build out menu bar
+  complete resize functionality
+  check wnd_func.cpp bugs then finish off funcs
+  make & build out menu bar
   add tps counter
   build out text box ( using vectors ? )
   implement rest of menu bar funcs

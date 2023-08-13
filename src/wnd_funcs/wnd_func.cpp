@@ -6,11 +6,9 @@
 
 /*
   finish wnd_resize.cpp
-  check wnd_drag bugs then finish new funcs
-  simplify/optimize functions
-  make custom menu bar
-  build out menu bar functions
-  then go back to source.cpp todo list
+  check wnd_drag bugs then finish remaining funcs
+  simplify/optimize all code ( code review !! )
+  then go back to source.cpp todo list  
 */
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
@@ -40,9 +38,10 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
 
     wnd_drag_on( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
 
-    RECT cls{ wnd_sz.right - 25, 0, wnd_sz.right - 00, 25 };
-    RECT max{ wnd_sz.right - 50, 0, wnd_sz.right - 25, 25 };
-    RECT min{ wnd_sz.right - 75, 0, wnd_sz.right - 50, 25 };
+    // compensating for resize functionality
+    RECT cls{ wnd_sz.right - 25, 5, wnd_sz.right - 05, 25 };
+    RECT max{ wnd_sz.right - 50, 5, wnd_sz.right - 25, 25 };
+    RECT min{ wnd_sz.right - 75, 5, wnd_sz.right - 50, 25 };
     wnd_title_clicked_cls( hwnd, PtInRect( &cls, m_pos ) );
     wnd_title_clicked_max( hwnd, PtInRect( &max, m_pos ) );
     wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );
@@ -54,7 +53,8 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
-    wnd_resize( hwnd, m_pos, d_side );
+    if( !is_maxd )
+      wnd_resize( hwnd, m_pos, d_side );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;
