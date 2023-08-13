@@ -7,14 +7,14 @@ void wnd_drag_on( HWND hwnd, RECT title_bar, POINT m_pos ) {
   if( PtInRect( &title_bar, duser_start ) ) {
     user_dragging = true;
     duser_start = m_pos;
-    (void)SetCapture( hwnd );
+    SetCapture( hwnd );
   }
 } 
 
 void wnd_drag_off() {
   if( user_dragging ) {
     user_dragging = false;
-    (void)ReleaseCapture();
+    ReleaseCapture();
   }
 }
 
@@ -30,12 +30,12 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   };
 
   RECT r_wnd;
-  (void)GetWindowRect( hwnd, &r_wnd );
+  GetWindowRect( hwnd, &r_wnd );
 
   HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
-  (void)GetMonitorInfoW( c_mon, &i_mon );
+  GetMonitorInfoW( c_mon, &i_mon );
   s32 wnd_szx = r_wnd.right - r_wnd.left,
       wnd_szy = r_wnd.bottom - r_wnd.top,
       m_szx = i_mon.rcWork.right - i_mon.rcWork.left,
@@ -55,7 +55,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     is_maxd = false;
   }
 
-  (void)SetWindowPos( hwnd, 0,
+  SetWindowPos( hwnd, 0,
     wnd_pos.x, wnd_pos.y,
     max_prev_sz.right - max_prev_sz.left,
     max_prev_sz.bottom - max_prev_sz.top,
@@ -67,7 +67,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
 // also fix size not resetting when dragged out of maximize for some mf reason :|
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   POINT sm_pos;
-  (void)GetCursorPos( &sm_pos );
+  GetCursorPos( &sm_pos );
 
   HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
   static HMONITOR pc_mon = nullptr;
@@ -76,7 +76,7 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   if( c_mon != pc_mon ) {
     MONITORINFO i_mon;
     i_mon.cbSize = sizeof( i_mon );
-    (void)GetMonitorInfoW( c_mon, &i_mon );
+    GetMonitorInfoW( c_mon, &i_mon );
 
     if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
       pm_rect = i_mon.rcWork;
@@ -86,7 +86,7 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
 
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
-  (void)GetMonitorInfoW( pc_mon, &i_mon );
+  GetMonitorInfoW( pc_mon, &i_mon );
   salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
       pmon_szx = pm_rect.right - pm_rect.left,
        mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top,
@@ -107,9 +107,9 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   if( within_range ) {
     is_maxd = true;
 
-    (void)GetClientRect( hwnd, &max_prev_sz );
+    GetClientRect( hwnd, &max_prev_sz );
 
-    (void)SetWindowPos( hwnd, 0,
+    SetWindowPos( hwnd, 0,
       i_mon.rcWork.left,
       i_mon.rcWork.top,
       mon_szx, mon_szy,

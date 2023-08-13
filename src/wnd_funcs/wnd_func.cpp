@@ -6,9 +6,7 @@
 
 /*
   finish new drag functionality
-  void out all missed funcs
   do wnd_resize.cpp
-  void out all missed funcs
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
@@ -17,19 +15,19 @@
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   RECT wnd_sz;
   POINT m_pos;
-  (void)GetClientRect( hwnd, &wnd_sz );
-  (void)GetCursorPos( &m_pos );
-  (void)ScreenToClient( hwnd, &m_pos );
+  GetClientRect( hwnd, &wnd_sz );
+  GetCursorPos( &m_pos );
+  ScreenToClient( hwnd, &m_pos );
   
   // make side stay if unchanged so it stops tweaking
   s32 d_side{};
   wnd_resize_get_side( d_side, m_pos, wnd_sz );
 
 #ifdef _DEBUG
-  (void)AllocConsole();
+  AllocConsole();
   FILE* new_std;
-  (void)freopen_s( &new_std, "CONOUT$", "w", stdout );
-  //std::cout << m_pos.x << " " << m_pos.y << std::endl;
+  freopen_s( &new_std, "CONOUT$", "w", stdout );
+  std::cout << m_pos.x << " " << m_pos.y << std::endl;
 #endif
 
   switch( msg ) {
@@ -65,7 +63,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
 
     wnd_title_draw( hdc, m_pos, wnd_sz );
 
-    (void)EndPaint( hwnd, &ps );
+    EndPaint( hwnd, &ps );
   } break;
   }
   return DefWindowProcW( hwnd, msg, wp, lp );

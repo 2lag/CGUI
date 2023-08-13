@@ -20,14 +20,14 @@ void wnd_resize_on( HWND hwnd, POINT m_pos, s32 d_side ) {
   if( d_side ) {
     user_resizing = true;
     ruser_start = m_pos;
-    (void)SetCapture( hwnd );
+    SetCapture( hwnd );
   }
 }
 
-void wnd_resize_off( ) {
+void wnd_resize_off() {
   if( user_resizing ) {
     user_resizing = false;
-    (void)ReleaseCapture();
+    ReleaseCapture();
   }
 }
 
@@ -55,7 +55,6 @@ void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) { // make edge stick to cu
   s32 wnd_szx = wnd_sz.right - wnd_sz.left + 2,
       wnd_szy = wnd_sz.bottom - wnd_sz.top + 2;
 
-  std::cout << m_delta.x << " " << m_delta.y << std::endl;
   // change cursor to respective drag direction
   if( d_side == 4 ) {
     wnd_pos.x += m_delta.x;

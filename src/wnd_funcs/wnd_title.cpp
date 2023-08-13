@@ -12,28 +12,28 @@ void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz ) {
     wnd_obj_create( { wnd_sz.right - 74, 0, wnd_sz.right - 50, 24 }, COL_D_GRY, false )
   };
 
-  (void)SetBkMode( hdc, TRANSPARENT );
-  (void)SetTextColor( hdc, COL_L_GRY );
+  SetBkMode( hdc, TRANSPARENT );
+  SetTextColor( hdc, COL_L_GRY );
 
   for( s32 idx = 0; idx < 8; ++idx ) {
-    (void)FillRect( hdc, &obj[ idx ].r, obj[ idx ].col );
+    FillRect( hdc, &obj[ idx ].r, obj[ idx ].col );
     if( obj[ idx ].next ) {
       ++idx;
-      (void)FillRect( hdc, &obj[ idx ].r, obj[ idx ].col );
+      FillRect( hdc, &obj[ idx ].r, obj[ idx ].col );
     }
 
 #define if_idx_draw_txt( val, txt, xoff, yoff ) \
 if( idx == val ) \
-(void)TextOutW( hdc, obj[ idx ].r.right - xoff, obj[ idx ].r.bottom - yoff, txt, 1 )
+TextOutW( hdc, obj[ idx ].r.right - xoff, obj[ idx ].r.bottom - yoff, txt, 1 )
 
     if_idx_draw_txt( 3, L"X", 16, 20 );
     if_idx_draw_txt( 5, L"O", 17, 20 );
     if_idx_draw_txt( 7, L"_", 16, 25 );
   }
-  (void)TextOutW( hdc, 6, 4, L"Type", 4 );
+  TextOutW( hdc, 6, 4, L"Type", 4 );
 
   for( auto& it : obj )
-    (void)DeleteObject( it.col );
+    DeleteObject( it.col );
 }
 
 void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
@@ -80,7 +80,7 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
     HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
     MONITORINFO i_mon;
     i_mon.cbSize = sizeof( i_mon );
-    (void)GetMonitorInfoW( c_mon, &i_mon );
+    GetMonitorInfoW( c_mon, &i_mon );
     salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
          mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
 
@@ -110,5 +110,5 @@ void wnd_title_clicked_min( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
 
-  (void)ShowWindow( hwnd, SW_MINIMIZE );
+  ShowWindow( hwnd, SW_MINIMIZE );
 }

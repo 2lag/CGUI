@@ -29,7 +29,7 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
     L"type", L"type_class"
   };
 
-  (void)RegisterClassExW( &wnd_cls );
+  RegisterClassExW( &wnd_cls );
 
   HWND hwnd = CreateWindowExW( 0,
     L"type_class", L"type",
@@ -39,14 +39,14 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
     0, 0, inst, 0
   );
 
-  (void)ShowWindow( hwnd, cmdshow );
-  (void)UpdateWindow( hwnd );
+  ShowWindow( hwnd, cmdshow );
+  UpdateWindow( hwnd );
 
   MSG msg;
   while( true ) {
     while( PeekMessageW( &msg, 0, 0, 0, PM_REMOVE ) ) {
-      (void)TranslateMessage( &msg );
-      (void)DispatchMessageW( &msg );
+      TranslateMessage( &msg );
+      DispatchMessageW( &msg );
     }
 
     if( msg.message == WM_QUIT )
