@@ -17,20 +17,26 @@ void wnd_resize_off() {
     ReleaseCapture();
   }
 }
-
+// add size check to only get interior 20-80% portions
+// add rects/ptinrect for corners for diag drag and add more d_side values
 void wnd_resize_get_side( s32 &d_side, POINT m_pos, RECT wnd_sz ) {
-  if( m_pos.x <= 5 )
-    d_side = 4;
-  else if( m_pos.x >= wnd_sz.right - 5 )
-    d_side = 2;
-  else if( m_pos.y <= 5 )
-    d_side = 1;
-  else if( m_pos.y >= wnd_sz.bottom - 5 )
-    d_side = 3;
-  else
+  if( m_pos.x <= 5 ) {
+    d_side = EDGE_LEFT;
+    SetCursor( LoadCursorW( 0, IDC_SIZEWE ) );
+  } else if( m_pos.x >= wnd_sz.right - 5 ) {
+    d_side = EDGE_RIGHT;
+    SetCursor( LoadCursorW( 0, IDC_SIZEWE ) );
+  } else if( m_pos.y <= 5 ) {
+    d_side = EDGE_TOP;
+    SetCursor( LoadCursorW( 0, IDC_SIZENS ) );
+  } else if( m_pos.y >= wnd_sz.bottom - 5 ) {
+    SetCursor( LoadCursorW( 0, IDC_SIZENS ) );
+    d_side = EDGE_BOTTOM;
+  } else {
+    SetCursor( LoadCursorW( 0, IDC_ARROW ) );
     d_side = 0;
+  }
 }
-// make sure window cant be dragged off edge
 // make edge stick to cursor better
 // then add corner drag functionality ( ptinrect ? )
 void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
@@ -60,26 +66,30 @@ void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
   std::cout << m_delta.x << " " << m_delta.y << std::endl;
 #endif
 
-  // change cursor here
-
-  if ( d_side == 1 ) {       // top
+  switch( d_side ) {
+  case EDGE_TOP: {
     wnd_pos.y += m_delta.y;
     wnd_szy -= m_delta.y;
-  } else if( d_side == 2 ) { // right
+  } break;
+  case EDGE_RIGHT: {
     wnd_szx += m_delta.x;
     if( m_delta.x < 0 )
       ruser_start = m_pos;
-  } else if( d_side == 3 ) { // bottom
+  } break;
+  case EDGE_BOTTOM: {
     wnd_szy += m_delta.y;
     if( m_delta.y < 0 )
       ruser_start = m_pos;
-  } else if( d_side == 4 ) { // left
+  } break;
+  case EDGE_LEFT: {
     wnd_pos.x += m_delta.x;
     wnd_szx -= m_delta.x;
+  } break;
   }
+
   // * DO THIS ON PC CUZ LAPPYTOPPY ONLY GOT 1 SCREEN DUR *
   // get current monitor from screen mouse pos
-  // check wnd_pos and wnd_sz so it isnt off the current monitor
+  // check wnd_pos and wnd_sz so it cant be dragged off the current monitor
 
   SetWindowPos( hwnd, 0,
     wnd_pos.x, wnd_pos.y,

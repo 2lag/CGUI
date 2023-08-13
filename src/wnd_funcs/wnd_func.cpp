@@ -5,8 +5,8 @@
 #include "wnd_resize.h"
 
 /*
-  fix drag bugs then finish new funcs
   finish wnd_resize.cpp
+  check wnd_drag bugs then finish new funcs
   simplify/optimize functions
   make custom menu bar
   build out menu bar functions

@@ -24,7 +24,7 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
     0, 0,
     inst,
     0,
-    LoadCursor( 0, IDC_ARROW ),
+    LoadCursorW( 0, IDC_ARROW ),
     CreateSolidBrush( RGB( 32, 32, 32 ) ),
     L"type", L"type_class"
   };
