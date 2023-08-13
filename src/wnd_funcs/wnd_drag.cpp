@@ -119,4 +119,4 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
 }
 
 // also add half sizing dragging it to middle of either side ( same call location )
-// also do top and bottom i guess for vertical monitors
+// as well as corners for quarter size lmfao fml

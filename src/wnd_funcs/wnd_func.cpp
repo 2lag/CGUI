@@ -5,8 +5,9 @@
 #include "wnd_resize.h"
 
 /*
-  finish new drag functionality
-  do wnd_resize.cpp
+  fix drag bugs then finish new funcs
+  finish wnd_resize.cpp
+  simplify/optimize functions
   make custom menu bar
   build out menu bar functions
   then go back to source.cpp todo list
@@ -19,7 +20,6 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   GetCursorPos( &m_pos );
   ScreenToClient( hwnd, &m_pos );
   
-  // make side stay if unchanged so it stops tweaking
   s32 d_side{};
   wnd_resize_get_side( d_side, m_pos, wnd_sz );
 
@@ -27,7 +27,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   AllocConsole();
   FILE* new_std;
   freopen_s( &new_std, "CONOUT$", "w", stdout );
-  std::cout << m_pos.x << " " << m_pos.y << std::endl;
+  // std::cout << m_pos.x << " " << m_pos.y << std::endl;
 #endif
 
   switch( msg ) {
@@ -36,10 +36,9 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     return 0;
   } break;
   case WM_LBUTTONDOWN: {
-    if( d_side )
-      wnd_resize_on( hwnd, m_pos, d_side );
+    wnd_resize_on( hwnd, m_pos, d_side );
 
-    wnd_drag_on( hwnd, { 0, 2, wnd_sz.right - 75, 25 }, m_pos );
+    wnd_drag_on( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
 
     RECT cls{ wnd_sz.right - 25, 0, wnd_sz.right - 00, 25 };
     RECT max{ wnd_sz.right - 50, 0, wnd_sz.right - 25, 25 };
