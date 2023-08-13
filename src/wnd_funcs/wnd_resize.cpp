@@ -17,19 +17,29 @@ void wnd_resize_off() {
     ReleaseCapture();
   }
 }
-// add size check to only get interior 20-80% portions
-// add rects/ptinrect for corners for diag drag and add more d_side values
+// add corner diag drag
 void wnd_resize_get_side( s32 &d_side, POINT m_pos, RECT wnd_sz ) {
-  if( m_pos.x <= 5 ) {
+  salt wnd_szx = wnd_sz.right - wnd_sz.left,
+      wnd_szy = wnd_sz.bottom - wnd_sz.top;
+
+  if( m_pos.x <= 5  &&
+      m_pos.y <= wnd_szy * 0.9f &&
+      m_pos.y >= wnd_szx * 0.1f ) {
     d_side = EDGE_LEFT;
     SetCursor( LoadCursorW( 0, IDC_SIZEWE ) );
-  } else if( m_pos.x >= wnd_sz.right - 5 ) {
+  } else if( m_pos.x >= wnd_sz.right - 5 &&
+             m_pos.y >= wnd_szx * 0.1f &&
+             m_pos.y <= wnd_szx * 0.9f ) {
     d_side = EDGE_RIGHT;
     SetCursor( LoadCursorW( 0, IDC_SIZEWE ) );
-  } else if( m_pos.y <= 5 ) {
+  } else if( m_pos.y <= 5 &&
+             m_pos.x <= wnd_szx * 0.9f &&
+             m_pos.x >= wnd_szx * 0.1f ) {
     d_side = EDGE_TOP;
     SetCursor( LoadCursorW( 0, IDC_SIZENS ) );
-  } else if( m_pos.y >= wnd_sz.bottom - 5 ) {
+  } else if( m_pos.y >= wnd_sz.bottom - 5 &&
+             m_pos.x >= wnd_szx * 0.1f &&
+             m_pos.x <= wnd_szx * 0.9f ) {
     SetCursor( LoadCursorW( 0, IDC_SIZENS ) );
     d_side = EDGE_BOTTOM;
   } else {
@@ -37,8 +47,8 @@ void wnd_resize_get_side( s32 &d_side, POINT m_pos, RECT wnd_sz ) {
     d_side = 0;
   }
 }
+// add corner diag drag ( ptinrect ? )
 // make edge stick to cursor better
-// then add corner drag functionality ( ptinrect ? )
 void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
   if( !d_side || !user_resizing ) {
     ruser_start = m_pos;
