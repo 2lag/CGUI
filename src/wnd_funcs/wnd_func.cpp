@@ -5,7 +5,7 @@
 #include "wnd_drag.h"
 
 /*
-  check wnd_drag bugs then finish remaining funcs
+  finish last drag func
   simplify/optimize all code ( code review !! )
   then go back to source.cpp todo list  
 */
@@ -47,6 +47,8 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_LBUTTONUP: {
     wnd_drag_max( hwnd, m_pos );
+    wnd_drag_half( hwnd, m_pos );
+    wnd_drag_quart( hwnd, m_pos );
     wnd_drag_off();
     wnd_resize_off();
   } break;

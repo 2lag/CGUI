@@ -1,8 +1,7 @@
 #include "wnd_funcs/wnd_func.h"
 
 /*
-  complete resize functionality
-  check wnd_func.cpp bugs then finish off funcs
+  finish off drag func
   make & build out menu bar
   add tps counter
   build out text box ( using vectors ? )
