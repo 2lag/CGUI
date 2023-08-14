@@ -3,8 +3,62 @@
 
 bool user_resizing = false;
 POINT ruser_start{};
+s32 d_side{};
 
-void wnd_resize_on( HWND hwnd, POINT m_pos, s32 d_side ) {
+void wnd_resize_get_side( POINT m_pos, RECT wnd_sz ) {
+  salt wnd_szx = wnd_sz.right - wnd_sz.left,
+       wnd_szy = wnd_sz.bottom - wnd_sz.top;
+
+  bool on_left   = ( m_pos.x <= 5 ),
+       on_top    = ( m_pos.y <= 5 ),
+       on_right  = ( m_pos.x >= wnd_szx - 5 ),
+       on_bottom = ( m_pos.y >= wnd_szy - 5 ),
+       in_hcenter = ( !on_right && !on_left ),
+       in_vcenter = ( !on_bottom && !on_top );
+
+  if( on_top )
+    d_side = in_hcenter ? EDGE_TOP : ( on_left ? EDGE_TOP_LEFT : EDGE_TOP_RIGHT );
+  else if( on_bottom )
+    d_side = in_hcenter ? EDGE_BOTTOM : ( on_left ? EDGE_BOTTOM_LEFT : EDGE_BOTTOM_RIGHT );
+  else if( on_left )
+    d_side = in_vcenter ? EDGE_LEFT : EDGE_TOP_LEFT;
+  else if( on_right )
+    d_side = in_vcenter ? EDGE_RIGHT : EDGE_BOTTOM_RIGHT;
+  else
+    d_side = 0;
+}
+
+void wnd_resize_get_cursor( POINT m_pos, RECT wnd_sz ) {
+  salt wnd_szx = wnd_sz.right - wnd_sz.left,
+       wnd_szy = wnd_sz.bottom - wnd_sz.top;
+
+  bool on_left   = ( m_pos.x <= 5 ),
+       on_top    = ( m_pos.y <= 5 ),
+       on_right  = ( m_pos.x >= wnd_szx - 5 ),
+       on_bottom = ( m_pos.y >= wnd_szy - 5 ),
+       in_hcenter = ( !on_right && !on_left ),
+       in_vcenter = ( !on_bottom && !on_top );
+
+  HCURSOR cur_nesw = LoadCursorW( 0, IDC_SIZENESW ),
+    cur_nwse = LoadCursorW( 0, IDC_SIZENWSE ),
+    cur_ns   = LoadCursorW( 0, IDC_SIZENS   ),
+    cur_we   = LoadCursorW( 0, IDC_SIZEWE   ),
+    cur_def  = LoadCursorW( 0, IDC_ARROW    );
+
+  if( on_top )
+    SetCursor( in_hcenter ? cur_ns : ( on_left ? cur_nwse : cur_nesw ) );
+  else if( on_bottom )
+    SetCursor( in_hcenter ? cur_ns : ( on_left ? cur_nesw : cur_nwse ) );
+  else if( on_left )
+    SetCursor( in_vcenter ? cur_we : cur_nesw );
+  else if( on_right )
+    SetCursor( in_vcenter ? cur_we : cur_nwse );
+  else
+    SetCursor( cur_def );
+}
+
+void wnd_resize_on( HWND hwnd, POINT m_pos, RECT wnd_sz ) { // maybe call 2get d_side here before if ?
+  wnd_resize_get_side( m_pos, wnd_sz );
   if( d_side != 0 ) {
     user_resizing = true;
     ruser_start = m_pos;
@@ -19,42 +73,7 @@ void wnd_resize_off() {
   }
 }
 
-void wnd_resize_get_side( s32 &d_side, POINT m_pos, RECT wnd_sz ) {
-  salt wnd_szx = wnd_sz.right - wnd_sz.left,
-       wnd_szy = wnd_sz.bottom - wnd_sz.top;
-
-  bool on_left   = ( m_pos.x <= 5 ),
-       on_top    = ( m_pos.y <= 5 ),
-       on_right  = ( m_pos.x >= wnd_szx - 5 ),
-       on_bottom = ( m_pos.y >= wnd_szy - 5 ),
-       in_hcenter = ( !on_right && !on_left ),
-       in_vcenter = ( !on_bottom && !on_top );
-
-  HCURSOR cur_nesw = LoadCursorW( 0, IDC_SIZENESW ),
-          cur_nwse = LoadCursorW( 0, IDC_SIZENWSE ),
-          cur_ns   = LoadCursorW( 0, IDC_SIZENS   ),
-          cur_we   = LoadCursorW( 0, IDC_SIZEWE   ),
-          cur_def  = LoadCursorW( 0, IDC_ARROW    );
-
-  if( on_top ) {
-    d_side = in_hcenter ? EDGE_TOP : ( on_left ? EDGE_TOP_LEFT : EDGE_TOP_RIGHT );
-    SetCursor( in_hcenter ? cur_ns : ( on_left ? cur_nwse : cur_nesw ) );
-  } else if( on_bottom ) {
-    d_side = in_hcenter ? EDGE_BOTTOM : ( on_left ? EDGE_BOTTOM_LEFT : EDGE_BOTTOM_RIGHT );
-    SetCursor( in_hcenter ? cur_ns : ( on_left ? cur_nesw : cur_nwse ) );
-  } else if( on_left ) {
-    d_side = in_vcenter ? EDGE_LEFT : EDGE_TOP_LEFT;
-    SetCursor( in_vcenter ? cur_we : cur_nesw );
-  } else if( on_right ) {
-    d_side = in_vcenter ? EDGE_RIGHT : EDGE_BOTTOM_RIGHT;
-    SetCursor( in_vcenter ? cur_we : cur_nwse );
-  } else {
-    d_side = 0;
-    SetCursor( cur_def );
-  }
-}
-
-void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
+void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   if( !d_side || !user_resizing ) {
     ruser_start = m_pos;
     return;
@@ -79,7 +98,6 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
     _wnd_sz += s;
   };
 
-  // make it stay dragging current side until mouse released
   switch( d_side ) {
   case EDGE_TOP_LEFT:
     wnd_adj_pos_sz( m_delta, -m_delta );

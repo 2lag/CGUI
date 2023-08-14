@@ -5,7 +5,7 @@
 #include "wnd_resize.h"
 
 /*
-  finish wnd_resize.cpp
+  complete wnd_resize.cpp
   check wnd_drag bugs then finish remaining funcs
   simplify/optimize all code ( code review !! )
   then go back to source.cpp todo list  
@@ -18,9 +18,6 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   GetCursorPos( &m_pos );
   ScreenToClient( hwnd, &m_pos );
   
-  s32 d_side{};
-  wnd_resize_get_side( d_side, m_pos, wnd_sz );
-
 #ifdef _DEBUG
   AllocConsole();
   FILE* new_std;
@@ -37,7 +34,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     wnd_resize_title( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
   } break;
   case WM_LBUTTONDOWN: {
-    wnd_resize_on( hwnd, m_pos, d_side );
+    wnd_resize_on( hwnd, m_pos, wnd_sz );
 
     wnd_drag_on( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
 
@@ -56,8 +53,10 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
-    if( !is_maxd )
-      wnd_resize( hwnd, m_pos, wnd_sz, d_side );
+    if( !is_maxd ) {
+      wnd_resize_get_cursor( m_pos, wnd_sz );
+      wnd_resize( hwnd, m_pos, wnd_sz );
+    }
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;
