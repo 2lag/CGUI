@@ -11,3 +11,13 @@
 
 extern RECT max_prev_sz;
 extern bool is_maxd;
+
+inline POINT operator+=( POINT &a, const POINT &b ) {
+  a.x += b.x;
+  a.y += b.y;
+  return a;
+}
+
+inline POINT operator-( POINT &a ) {
+  return { -a.x, -a.y };
+}
