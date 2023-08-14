@@ -9,8 +9,9 @@
 #include <iostream>
 #endif
 
-extern RECT max_prev_sz;
-extern bool is_maxd;
+extern POINT max_prev_pos;
+extern RECT  max_prev_sz;
+extern bool  is_maxd;
 
 inline POINT operator+=( POINT &a, const POINT &b ) {
   a.x += b.x;

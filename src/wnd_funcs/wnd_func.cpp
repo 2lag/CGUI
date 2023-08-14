@@ -25,7 +25,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   AllocConsole();
   FILE* new_std;
   freopen_s( &new_std, "CONOUT$", "w", stdout );
-  // std::cout << m_pos.x << " " << m_pos.y << std::endl;
+
 #endif
 
   switch( msg ) {
@@ -33,12 +33,15 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     PostQuitMessage( 0 );
     return 0;
   } break;
+  case WM_LBUTTONDBLCLK: {
+    wnd_resize_title( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
+  } break;
   case WM_LBUTTONDOWN: {
     wnd_resize_on( hwnd, m_pos, d_side );
 
     wnd_drag_on( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
 
-    // compensating for resize functionality
+    // simplify
     RECT cls{ wnd_sz.right - 25, 5, wnd_sz.right - 05, 25 };
     RECT max{ wnd_sz.right - 50, 5, wnd_sz.right - 25, 25 };
     RECT min{ wnd_sz.right - 75, 5, wnd_sz.right - 50, 25 };
@@ -54,7 +57,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
     if( !is_maxd )
-      wnd_resize( hwnd, m_pos, d_side );
+      wnd_resize( hwnd, m_pos, wnd_sz, d_side );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;

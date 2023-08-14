@@ -44,19 +44,19 @@ void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
 }
 
 RECT max_prev_sz;
+POINT max_prev_pos;
 bool is_maxd = false;
 void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
 
-  static POINT prev_pos;
   if( !is_maxd ) {
     GetClientRect( hwnd, &max_prev_sz );
-    prev_pos = {
+    max_prev_pos = {
       max_prev_sz.left,
       max_prev_sz.top
     };
-    ClientToScreen( hwnd, &prev_pos );
+    ClientToScreen( hwnd, &max_prev_pos );
 
     HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
     MONITORINFO m_info;
@@ -89,16 +89,16 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
     salt wnd_szx = max_prev_sz.right - max_prev_sz.left,
          wnd_szy = max_prev_sz.bottom - max_prev_sz.top;
 
-    if( prev_pos.x == 0 || prev_pos.y == 0 ) {
-      prev_pos = {
+    if( max_prev_pos.x == 0 || max_prev_pos.y == 0 ) {
+      max_prev_pos = {
         ( mon_szx / 2 ) - ( wnd_szx / 2 ),
         ( mon_szy / 2 ) - ( wnd_szy / 2 )
       };
     }
 
     SetWindowPos( hwnd, 0,
-      prev_pos.x,
-      prev_pos.y,
+      max_prev_pos.x,
+      max_prev_pos.y,
       wnd_szx,
       wnd_szy,
       SWP_NOZORDER

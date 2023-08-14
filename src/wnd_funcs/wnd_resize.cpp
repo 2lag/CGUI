@@ -54,14 +54,11 @@ void wnd_resize_get_side( s32 &d_side, POINT m_pos, RECT wnd_sz ) {
   }
 }
 
-void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
+void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
   if( !d_side || !user_resizing ) {
     ruser_start = m_pos;
     return;
   }
-
-  RECT wnd_sz{};
-  GetClientRect( hwnd, &wnd_sz );
 
   POINT pwnd_sz {
     wnd_sz.right - wnd_sz.left + 2,
@@ -76,10 +73,6 @@ void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
     wnd_sz.top  - 1
   };
   ClientToScreen( hwnd, &wnd_pos );
-  
-#if _DEBUG
-  std::cout << m_delta.x << " " << m_delta.y << std::endl;
-#endif
 
   auto wnd_adj_pos_sz = [&]( POINT p, POINT s ) {
     wnd_pos += p;
@@ -87,7 +80,6 @@ void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
   };
 
   // make it stay dragging current side until mouse released
-  //   maybe splilt get side into one for set cursor (WM_MOUSEMOVE) and one for side (WM_LBUTTONDOWN)
   switch( d_side ) {
   case EDGE_TOP_LEFT:
     wnd_adj_pos_sz( m_delta, -m_delta );
@@ -139,6 +131,63 @@ void wnd_resize( HWND hwnd, POINT m_pos, s32 d_side ) {
   );
 }
 
-// add function for if titlebar double clicked, do max/restore
-// call in WM_LBUTTONDBLCLK
-// take code from uhhhhhhhhhhhhh wnd_title.cpp iirc
+// figure out why this isn't working
+void wnd_resize_title( HWND hwnd, RECT title_bar, POINT m_pos ) {
+  if( !PtInRect( &title_bar, m_pos ) )
+    return;
+
+  if( !is_maxd ) {
+    GetClientRect( hwnd, &max_prev_sz );
+    max_prev_pos = {
+      max_prev_sz.left,
+      max_prev_sz.top
+    };
+    ClientToScreen( hwnd, &max_prev_pos );
+
+    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+    MONITORINFO m_info;
+    m_info.cbSize = sizeof( m_info );
+    GetMonitorInfoW( c_mon, &m_info );
+    s32 m_width  = m_info.rcWork.right - m_info.rcWork.left,
+        m_height = m_info.rcWork.bottom - m_info.rcWork.top;
+
+    is_maxd = true;
+
+    SetWindowPos( hwnd, 0,
+      m_info.rcWork.left,
+      m_info.rcWork.top,
+      m_width,
+      m_height,
+      SWP_NOZORDER
+    );
+  } else {
+    is_maxd = false;
+
+    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+    MONITORINFO i_mon;
+    i_mon.cbSize = sizeof( i_mon );
+    GetMonitorInfoW( c_mon, &i_mon );
+    salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
+         mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+
+    RECT r_wnd;
+    GetClientRect( hwnd, &r_wnd );
+    salt wnd_szx = max_prev_sz.right - max_prev_sz.left,
+         wnd_szy = max_prev_sz.bottom - max_prev_sz.top;
+
+    if( max_prev_pos.x == 0 || max_prev_pos.y == 0 ) {
+      max_prev_pos = {
+        ( mon_szx / 2 ) - ( wnd_szx / 2 ),
+        ( mon_szy / 2 ) - ( wnd_szy / 2 )
+      };
+    }
+
+    SetWindowPos( hwnd, 0,
+      max_prev_pos.x,
+      max_prev_pos.y,
+      wnd_szx,
+      wnd_szy,
+      SWP_NOZORDER
+    );
+  }
+}
