@@ -40,10 +40,10 @@ void wnd_resize_get_cursor( POINT m_pos, RECT wnd_sz ) {
        in_vcenter = ( !on_bottom && !on_top );
 
   HCURSOR cur_nesw = LoadCursorW( 0, IDC_SIZENESW ),
-    cur_nwse = LoadCursorW( 0, IDC_SIZENWSE ),
-    cur_ns   = LoadCursorW( 0, IDC_SIZENS   ),
-    cur_we   = LoadCursorW( 0, IDC_SIZEWE   ),
-    cur_def  = LoadCursorW( 0, IDC_ARROW    );
+          cur_nwse = LoadCursorW( 0, IDC_SIZENWSE ),
+          cur_ns   = LoadCursorW( 0, IDC_SIZENS   ),
+          cur_we   = LoadCursorW( 0, IDC_SIZEWE   ),
+          cur_def  = LoadCursorW( 0, IDC_ARROW    );
 
   if( on_top )
     SetCursor( in_hcenter ? cur_ns : ( on_left ? cur_nwse : cur_nesw ) );
@@ -57,7 +57,7 @@ void wnd_resize_get_cursor( POINT m_pos, RECT wnd_sz ) {
     SetCursor( cur_def );
 }
 
-void wnd_resize_on( HWND hwnd, POINT m_pos, RECT wnd_sz ) { // maybe call 2get d_side here before if ?
+void wnd_resize_on( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   wnd_resize_get_side( m_pos, wnd_sz );
   if( d_side != 0 ) {
     user_resizing = true;
@@ -130,8 +130,22 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
     break;
   }
 
-  // * DO THIS ON PC CUZ LAPPYTOPPY ONLY GOT 1 SCREEN DUR *
-  // get current monitor from screen mouse pos & make it so it cant be resized off monitor
+  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+  MONITORINFO i_mon;
+  i_mon.cbSize = sizeof( i_mon );
+  GetMonitorInfoW( c_mon, &i_mon );
+  if( wnd_pos.x < i_mon.rcWork.left ) {
+    wnd_pos.x = i_mon.rcWork.left;
+    _wnd_sz.x += m_delta.x;
+  }
+  if( wnd_pos.y < i_mon.rcWork.top ) {
+    wnd_pos.y = i_mon.rcWork.top;
+    _wnd_sz.y += m_delta.y;
+  }
+  if( wnd_pos.x + _wnd_sz.x >= i_mon.rcWork.right )
+    _wnd_sz.x = i_mon.rcWork.right - wnd_pos.x;
+  if( wnd_pos.y + _wnd_sz.y >= i_mon.rcWork.bottom )
+    _wnd_sz.y = i_mon.rcWork.bottom - wnd_pos.y;
 
   if( _wnd_sz.x < 200 ) {
     _wnd_sz.x = 200;

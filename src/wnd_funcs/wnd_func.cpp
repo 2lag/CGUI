@@ -1,11 +1,10 @@
 #include "wnd_func.h"
 // combine these in win_feats.h or smthn for cleanliness
-#include "wnd_drag.h"
-#include "wnd_title.h"
 #include "wnd_resize.h"
+#include "wnd_title.h"
+#include "wnd_drag.h"
 
 /*
-  complete wnd_resize.cpp
   check wnd_drag bugs then finish remaining funcs
   simplify/optimize all code ( code review !! )
   then go back to source.cpp todo list  

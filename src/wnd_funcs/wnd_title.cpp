@@ -50,7 +50,21 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
 
+  HMONITOR c_mon;
+  if( !is_maxd )
+    c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+  else
+    c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTOPRIMARY );
+
+  MONITORINFO i_mon;
+  i_mon.cbSize = sizeof( i_mon );
+  GetMonitorInfoW( c_mon, &i_mon );
+  salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
+       mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+
   if( !is_maxd ) {
+    is_maxd = true;
+
     GetClientRect( hwnd, &max_prev_sz );
     max_prev_pos = {
       max_prev_sz.left,
@@ -58,31 +72,15 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
     };
     ClientToScreen( hwnd, &max_prev_pos );
 
-    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-    MONITORINFO m_info;
-    m_info.cbSize = sizeof( m_info );
-    GetMonitorInfoW( c_mon, &m_info );
-    s32 m_width  = m_info.rcWork.right - m_info.rcWork.left,
-        m_height = m_info.rcWork.bottom - m_info.rcWork.top;
-
-    is_maxd = true;
-
     SetWindowPos( hwnd, 0,
-      m_info.rcWork.left,
-      m_info.rcWork.top,
-      m_width,
-      m_height,
+      i_mon.rcWork.left,
+      i_mon.rcWork.top,
+      mon_szx,
+      mon_szy,
       SWP_NOZORDER
     );
   } else {
     is_maxd = false;
-
-    HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-    MONITORINFO i_mon;
-    i_mon.cbSize = sizeof( i_mon );
-    GetMonitorInfoW( c_mon, &i_mon );
-    salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
-         mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
 
     RECT r_wnd;
     GetClientRect( hwnd, &r_wnd );

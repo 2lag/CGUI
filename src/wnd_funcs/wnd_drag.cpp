@@ -5,6 +5,15 @@ POINT duser_start{};
 
 void wnd_drag_on( HWND hwnd, RECT title_bar, POINT m_pos ) {
   if( PtInRect( &title_bar, duser_start ) ) {
+    if( !is_maxd ) {
+      GetClientRect( hwnd, &max_prev_sz );
+      max_prev_pos = {
+        max_prev_sz.left,
+        max_prev_sz.top
+      };
+      ClientToScreen( hwnd, &max_prev_pos );
+    }
+
     user_dragging = true;
     duser_start = m_pos;
     SetCapture( hwnd );
@@ -62,9 +71,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
     swp_flags
   );
 }
-// ( not having this issue on laptop rm if fixed on pc )
-// fix bug w/ pressin max button out of dragged max on side screens
-// also fix size not resetting when dragged out of maximize for some mf reason :|
+
 void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   POINT sm_pos;
   GetCursorPos( &sm_pos );
