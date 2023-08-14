@@ -19,7 +19,7 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
                     _In_     s32       cmdshow) {
   WNDCLASSEX wnd_cls {
     sizeof( WNDCLASSEX ),
-    CS_HREDRAW | CS_VREDRAW,
+    CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW,
     wnd_proc,
     0, 0,
     inst,

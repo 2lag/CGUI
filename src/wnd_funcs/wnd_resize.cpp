@@ -60,7 +60,7 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
     return;
   }
 
-  POINT pwnd_sz {
+  POINT _wnd_sz {
     wnd_sz.right - wnd_sz.left + 2,
     wnd_sz.bottom - wnd_sz.top + 2
   },
@@ -76,7 +76,7 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
 
   auto wnd_adj_pos_sz = [&]( POINT p, POINT s ) {
     wnd_pos += p;
-    pwnd_sz += s;
+    _wnd_sz += s;
   };
 
   // make it stay dragging current side until mouse released
@@ -115,23 +115,22 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz, s32 d_side ) {
   // * DO THIS ON PC CUZ LAPPYTOPPY ONLY GOT 1 SCREEN DUR *
   // get current monitor from screen mouse pos & make it so it cant be resized off monitor
 
-  if( pwnd_sz.x < 200 ) {
-    pwnd_sz.x = 200;
+  if( _wnd_sz.x < 200 ) {
+    _wnd_sz.x = 200;
     wnd_pos.x -= ( m_delta.x > 0 ) ? m_delta.x : 0;
   }
-  if( pwnd_sz.y < 200 ) {
-    pwnd_sz.y = 200;
+  if( _wnd_sz.y < 200 ) {
+    _wnd_sz.y = 200;
     wnd_pos.y -= ( m_delta.y > 0 ) ? m_delta.y : 0;
   }
 
   SetWindowPos( hwnd, 0,
     wnd_pos.x, wnd_pos.y,
-    pwnd_sz.x, pwnd_sz.y,
+    _wnd_sz.x, _wnd_sz.y,
     SWP_NOZORDER
   );
 }
 
-// figure out why this isn't working
 void wnd_resize_title( HWND hwnd, RECT title_bar, POINT m_pos ) {
   if( !PtInRect( &title_bar, m_pos ) )
     return;
