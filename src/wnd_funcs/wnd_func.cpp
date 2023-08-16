@@ -5,7 +5,6 @@
 #include "wnd_drag.h"
 
 /*
-  finish last drag func
   simplify/optimize all code ( code review !! )
   then go back to source.cpp todo list  
 */
@@ -46,18 +45,20 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );
   } break;
   case WM_LBUTTONUP: {
-    wnd_drag_max( hwnd, m_pos );
-    wnd_drag_half( hwnd, m_pos );
-    wnd_drag_quart( hwnd, m_pos );
+    if( !user_resizing ) {
+      wnd_drag_max( hwnd, m_pos );
+      wnd_drag_half( hwnd, m_pos );
+      wnd_drag_quart( hwnd, m_pos );
+    }
     wnd_drag_off();
     wnd_resize_off();
   } break;
   case WM_MOUSEMOVE: {
     wnd_drag( hwnd, m_pos );
-    if( !is_maxd ) {
-      wnd_resize_get_cursor( m_pos, wnd_sz );
-      wnd_resize( hwnd, m_pos, wnd_sz );
-    }
+    if( is_maxd )
+      break;
+    wnd_resize_get_cursor( m_pos, wnd_sz );
+    wnd_resize( hwnd, m_pos, wnd_sz );
   } break;
   case WM_PAINT: {
     PAINTSTRUCT ps;

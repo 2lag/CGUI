@@ -9,6 +9,7 @@
 #include <iostream>
 #endif
 
+extern bool  user_resizing;
 extern POINT max_prev_pos;
 extern RECT  max_prev_sz;
 extern bool  is_maxd;

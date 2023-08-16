@@ -1,7 +1,7 @@
 #include "wnd_funcs/wnd_func.h"
 
 /*
-  finish off drag func
+  optimize all functions/clean all code
   make & build out menu bar
   add tps counter
   build out text box ( using vectors ? )

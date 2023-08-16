@@ -138,6 +138,7 @@ void wnd_drag_half( HWND hwnd, POINT m_pos ) {
   HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
   static HMONITOR pc_mon = nullptr;
   static RECT pm_rect{};
+  static POINT monitor_offset{};
 
   if( c_mon != pc_mon ) {
     MONITORINFO i_mon;
@@ -147,6 +148,9 @@ void wnd_drag_half( HWND hwnd, POINT m_pos ) {
     if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
       pm_rect = i_mon.rcWork;
       pc_mon = c_mon;
+
+      monitor_offset.x = i_mon.rcWork.left;
+      monitor_offset.y = i_mon.rcWork.top;
     }
   }
 
@@ -162,20 +166,22 @@ void wnd_drag_half( HWND hwnd, POINT m_pos ) {
     pm_rect.bottom - pm_rect.top
   };
 
-  salt sm_pos_adj;
+  POINT sm_pos_adj;
   if( sm_pos.x < 0 )
-    sm_pos_adj = sm_pos.x + pmon_sz.x;
+    sm_pos_adj.x = sm_pos.x + pmon_sz.x;
   else if( sm_pos.x > pmon_sz.x )
-    sm_pos_adj = sm_pos.x - ( pm_rect.right - mon_sz.x );
+    sm_pos_adj.x = sm_pos.x - ( pm_rect.right - mon_sz.x );
   else
-    sm_pos_adj = sm_pos.x;
+    sm_pos_adj.x = sm_pos.x;
 
-  bool within_left_range  = ( sm_pos.y >= mon_sz.y * 0.2f &&
-                              sm_pos.y <= i_mon.rcWork.bottom * 0.8f &&
-                              sm_pos_adj <= 20 ),
-       within_right_range = ( sm_pos.y >= mon_sz.y * 0.2f &&
-                              sm_pos.y <= i_mon.rcWork.bottom * 0.8f &&
-                              sm_pos_adj >= mon_sz.x - 20 );
+  sm_pos_adj.y = sm_pos.y - monitor_offset.y;
+
+  bool within_left_range  = ( sm_pos_adj.y >= mon_sz.y * 0.2f &&
+                              sm_pos_adj.y <= mon_sz.y * 0.8f &&
+                              sm_pos_adj.x <= 20 ),
+       within_right_range = ( sm_pos_adj.y >= mon_sz.y * 0.2f &&
+                              sm_pos_adj.y <= mon_sz.y * 0.8f &&
+                              sm_pos_adj.x >= mon_sz.x - 20 );
 
   if( within_left_range || within_right_range ) {
     is_maxd = true;
@@ -199,8 +205,7 @@ void wnd_drag_half( HWND hwnd, POINT m_pos ) {
     }
   }
 }
-// fix not properly sizing/placing on bottom of vertical monitor
-//   do sm_pos_adj.y
+
 void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
   POINT sm_pos;
   GetCursorPos( &sm_pos );
@@ -208,6 +213,7 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
   HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
   static HMONITOR pc_mon = nullptr;
   static RECT pm_rect{};
+  static POINT monitor_offset{};
 
   if( c_mon != pc_mon ) {
     MONITORINFO i_mon;
@@ -217,12 +223,16 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
     if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
       pm_rect = i_mon.rcWork;
       pc_mon = c_mon;
+
+      monitor_offset.x = i_mon.rcWork.left;
+      monitor_offset.y = i_mon.rcWork.top;
     }
   }
 
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
   GetMonitorInfoW( pc_mon, &i_mon );
+
   POINT mon_sz {
     i_mon.rcWork.right - i_mon.rcWork.left,
     i_mon.rcWork.bottom - i_mon.rcWork.top
@@ -240,16 +250,17 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
   else
     sm_pos_adj.x = sm_pos.x;
 
-  std::cout << sm_pos.x << " " << sm_pos.y << std::endl;
+  sm_pos_adj.y = sm_pos.y - monitor_offset.y;
+
   std::cout << sm_pos_adj.x << " " << sm_pos_adj.y << std::endl;
 
-  bool within_tl_range = ( sm_pos.y <= mon_sz.y * 0.2f &&
+  bool within_tl_range = ( sm_pos_adj.y <= mon_sz.y * 0.2f &&
                            sm_pos_adj.x <= mon_sz.x * 0.2f ),
-       within_tr_range = ( sm_pos.y <= mon_sz.y * 0.2f &&
+       within_tr_range = ( sm_pos_adj.y <= mon_sz.y * 0.2f &&
                            sm_pos_adj.x >= mon_sz.x * 0.8f ),
-       within_br_range = ( sm_pos.y >= mon_sz.y * 0.8f &&
+       within_br_range = ( sm_pos_adj.y >= mon_sz.y * 0.8f &&
                            sm_pos_adj.x >= mon_sz.x * 0.8f ),
-       within_bl_range = ( sm_pos.y >= mon_sz.y * 0.8f &&
+       within_bl_range = ( sm_pos_adj.y >= mon_sz.y * 0.8f &&
                            sm_pos_adj.x <= mon_sz.x * 0.2f ),
        within_range    = ( within_tl_range || within_tr_range ||
                            within_bl_range || within_br_range );
@@ -278,7 +289,7 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
     if( within_br_range ) {
       SetWindowPos( hwnd, 0,
         i_mon.rcWork.right - mon_sz.x / 2,
-        mon_sz.y / 2,
+        ( mon_sz.y / 2 ) + monitor_offset.y,
         mon_sz.x / 2, mon_sz.y / 2,
         SWP_NOZORDER
       );
@@ -286,7 +297,7 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
     if( within_bl_range ) {
       SetWindowPos( hwnd, 0,
         i_mon.rcWork.left,
-        mon_sz.y / 2,
+        ( mon_sz.y / 2 ) + monitor_offset.y,
         mon_sz.x / 2, mon_sz.y / 2,
         SWP_NOZORDER
       );
