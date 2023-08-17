@@ -4,28 +4,29 @@ bool user_dragging = false;
 POINT duser_start{};
 
 void wnd_drag_on( HWND hwnd, POINT m_pos, bool mouse_over ) {
-  if( mouse_over ) {
+  if( !mouse_over )
+    return;
 
-    if( !is_maxd ) {
-      GetClientRect( hwnd, &max_prev_sz );
-      max_prev_pos = {
-        max_prev_sz.left,
-        max_prev_sz.top
-      };
-      ClientToScreen( hwnd, &max_prev_pos );
-    }
-
-    user_dragging = true;
-    duser_start = m_pos;
-    SetCapture( hwnd );
+  if( !is_maxd ) {
+    GetClientRect( hwnd, &max_prev_sz );
+    max_prev_pos = {
+      max_prev_sz.left,
+      max_prev_sz.top
+    };
+    ClientToScreen( hwnd, &max_prev_pos );
   }
+
+  user_dragging = true;
+  duser_start = m_pos;
+  SetCapture( hwnd );
 } 
 
 void wnd_drag_off() {
-  if( user_dragging ) {
-    user_dragging = false;
-    ReleaseCapture();
-  }
+  if( !user_dragging )
+    return;
+  
+  user_dragging = false;
+  ReleaseCapture();
 }
 
 void wnd_drag( HWND hwnd, POINT m_pos ) {
@@ -46,22 +47,30 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
   GetMonitorInfoW( c_mon, &i_mon );
-  s32 wnd_szx = r_wnd.right - r_wnd.left,
-      wnd_szy = r_wnd.bottom - r_wnd.top,
-      m_szx = i_mon.rcWork.right - i_mon.rcWork.left,
-      m_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
-
-  u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
-  POINT wnd_pos = {
+  POINT wnd_sz {
+    r_wnd.right - r_wnd.left,
+    r_wnd.bottom - r_wnd.top
+  },
+  m_sz {
+    i_mon.rcWork.right - i_mon.rcWork.left,
+    i_mon.rcWork.bottom - i_mon.rcWork.top
+  },
+  wnd_pos {
     r_wnd.left + m_delta.x,
     r_wnd.top  + m_delta.y
   };
 
-  bool is_fullscreen = wnd_szx == m_szx && wnd_szy == m_szy,
-       is_halfscreen = wnd_szx == ( m_szx / 2 ) && wnd_szy == m_szy;
-  if( is_fullscreen || is_halfscreen ) {
+  u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
+
+  bool is_fullscreen = wnd_sz.x == m_sz.x &&
+                       wnd_sz.y == m_sz.y,
+       is_halfscreen = wnd_sz.x == ( m_sz.x / 2 ) &&
+                       wnd_sz.y == m_sz.y,
+       is_quarterscr = wnd_sz.x == ( m_sz.x / 2 ) &&
+                       wnd_sz.y == ( m_sz.y / 2 );
+  if( is_fullscreen || is_halfscreen || is_quarterscr ) {
     swp_flags = SWP_NOZORDER;
-    f32 wnd_xper = (f32)m_pos.x / (f32)wnd_szx;
+    f32 wnd_xper = (f32)m_pos.x / (f32)wnd_sz.x;
     salt nwnd_szx = max_prev_sz.right - max_prev_sz.left;
     wnd_pos.x = duser_start.x = (salt)( (f32)nwnd_szx * wnd_xper );
     is_maxd = false;
@@ -177,12 +186,12 @@ void wnd_drag_half( HWND hwnd, POINT m_pos ) {
 
   sm_pos_adj.y = sm_pos.y - monitor_offset.y;
 
-  bool within_left_range  = ( sm_pos_adj.y >= mon_sz.y * 0.2f &&
-                              sm_pos_adj.y <= mon_sz.y * 0.8f &&
+  bool within_left_range  = ( sm_pos_adj.y > 20 &&
+                              sm_pos_adj.y < mon_sz.y - 20 &&
                               sm_pos_adj.x <= 20 ),
-       within_right_range = ( sm_pos_adj.y >= mon_sz.y * 0.2f &&
-                              sm_pos_adj.y <= mon_sz.y * 0.8f &&
-                              sm_pos_adj.x >= mon_sz.x - 20 );
+       within_right_range = ( sm_pos_adj.y > 20 &&
+                              sm_pos_adj.y < mon_sz.y - 20 &&
+                              sm_pos_adj.x > mon_sz.x - 20 );
 
   if( within_left_range || within_right_range ) {
     is_maxd = true;
@@ -255,14 +264,14 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
 
   std::cout << sm_pos_adj.x << " " << sm_pos_adj.y << std::endl;
 
-  bool within_tl_range = ( sm_pos_adj.y <= mon_sz.y * 0.2f &&
-                           sm_pos_adj.x <= mon_sz.x * 0.2f ),
-       within_tr_range = ( sm_pos_adj.y <= mon_sz.y * 0.2f &&
-                           sm_pos_adj.x >= mon_sz.x * 0.8f ),
-       within_br_range = ( sm_pos_adj.y >= mon_sz.y * 0.8f &&
-                           sm_pos_adj.x >= mon_sz.x * 0.8f ),
-       within_bl_range = ( sm_pos_adj.y >= mon_sz.y * 0.8f &&
-                           sm_pos_adj.x <= mon_sz.x * 0.2f ),
+  bool within_tl_range = ( sm_pos_adj.y <= 20 &&
+                           sm_pos_adj.x <= 20 ),
+       within_tr_range = ( sm_pos_adj.y <= 20 &&
+                           sm_pos_adj.x >= mon_sz.x - 20 ),
+       within_br_range = ( sm_pos_adj.y >= mon_sz.y - 20 &&
+                           sm_pos_adj.x >= mon_sz.x - 20 ),
+       within_bl_range = ( sm_pos_adj.y >= mon_sz.y - 20  &&
+                           sm_pos_adj.x <= 20 ),
        within_range    = ( within_tl_range || within_tr_range ||
                            within_bl_range || within_br_range );
 

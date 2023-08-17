@@ -6,9 +6,12 @@
 
 /*
   simplify/optimize all code ( code review !! )
-    - wnd_title
     - wnd_resize
+      - wnd_resize
+      - wnd_resize_title
     - wnd_drag
+      - wnd_drag_quart/half/max
+      - wnd_drag
   then go back to source.cpp todo list  
 */
 

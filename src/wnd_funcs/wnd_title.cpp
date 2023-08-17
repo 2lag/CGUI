@@ -37,10 +37,8 @@ TextOutW( hdc, obj[ idx ].r.right - xoff, obj[ idx ].r.bottom - yoff, txt, 1 )
 }
 
 void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
-  if( !mouse_over )
-    return;
-
-  ExitProcess( 0 );
+  if( mouse_over )
+    ExitProcess( 0 );
 }
 
 RECT max_prev_sz;
@@ -50,17 +48,17 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
 
-  HMONITOR c_mon;
+  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTOPRIMARY );
   if( !is_maxd )
     c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-  else
-    c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTOPRIMARY );
 
   MONITORINFO i_mon;
   i_mon.cbSize = sizeof( i_mon );
   GetMonitorInfoW( c_mon, &i_mon );
-  salt mon_szx = i_mon.rcWork.right - i_mon.rcWork.left,
-       mon_szy = i_mon.rcWork.bottom - i_mon.rcWork.top;
+  POINT mon_sz { 
+    i_mon.rcWork.right - i_mon.rcWork.left,
+    i_mon.rcWork.bottom - i_mon.rcWork.top
+  };
 
   if( !is_maxd ) {
     is_maxd = true;
@@ -75,8 +73,7 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
     SetWindowPos( hwnd, 0,
       i_mon.rcWork.left,
       i_mon.rcWork.top,
-      mon_szx,
-      mon_szy,
+      mon_sz.x, mon_sz.y,
       SWP_NOZORDER
     );
   } else {
@@ -84,29 +81,28 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
 
     RECT r_wnd;
     GetClientRect( hwnd, &r_wnd );
-    salt wnd_szx = max_prev_sz.right - max_prev_sz.left,
-         wnd_szy = max_prev_sz.bottom - max_prev_sz.top;
+    POINT wnd_sz {
+      max_prev_sz.right - max_prev_sz.left,
+      max_prev_sz.bottom - max_prev_sz.top
+    };
 
-    if( max_prev_pos.x == 0 || max_prev_pos.y == 0 ) {
+    if( !max_prev_pos ) {
       max_prev_pos = {
-        ( mon_szx / 2 ) - ( wnd_szx / 2 ),
-        ( mon_szy / 2 ) - ( wnd_szy / 2 )
+        ( mon_sz.x / 2 ) - ( wnd_sz.x / 2 ),
+        ( mon_sz.y / 2 ) - ( wnd_sz.y / 2 )
       };
     }
 
     SetWindowPos( hwnd, 0,
       max_prev_pos.x,
       max_prev_pos.y,
-      wnd_szx,
-      wnd_szy,
+      wnd_sz.x, wnd_sz.y,
       SWP_NOZORDER
     );
   }
 }
 
 void wnd_title_clicked_min( HWND hwnd, bool mouse_over ) {
-  if( !mouse_over )
-    return;
-
-  ShowWindow( hwnd, SW_MINIMIZE );
+  if( mouse_over )
+    ShowWindow( hwnd, SW_MINIMIZE );
 }

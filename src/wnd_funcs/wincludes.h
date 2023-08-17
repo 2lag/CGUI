@@ -23,3 +23,7 @@ inline POINT operator+=( POINT &a, const POINT &b ) {
 inline POINT operator-( POINT &a ) {
   return { -a.x, -a.y };
 }
+
+inline bool operator!( POINT &a ) {
+  return ( a.x == 0 || a.y == 0 );
+}
