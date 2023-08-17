@@ -6,21 +6,33 @@
 
 /*
   simplify/optimize all code ( code review !! )
+    - wnd_title
+    - wnd_resize
+    - wnd_drag
   then go back to source.cpp todo list  
 */
 
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   RECT wnd_sz;
-  POINT m_pos;
   GetClientRect( hwnd, &wnd_sz );
+
+  POINT m_pos;
   GetCursorPos( &m_pos );
   ScreenToClient( hwnd, &m_pos );
+
+  RECT rtitle_drag { 0, 6, wnd_sz.right - 75, 25 },
+     cls { wnd_sz.right - 25, 5,
+           wnd_sz.right - 05, 25
+  }, max { wnd_sz.right - 50, 5,
+           wnd_sz.right - 25, 25
+  }, min { wnd_sz.right - 75, 5,
+           wnd_sz.right - 50, 25
+  };
   
 #ifdef _DEBUG
   AllocConsole();
   FILE* new_std;
   freopen_s( &new_std, "CONOUT$", "w", stdout );
-
 #endif
 
   switch( msg ) {
@@ -29,17 +41,11 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     return 0;
   } break;
   case WM_LBUTTONDBLCLK: {
-    wnd_resize_title( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
+    wnd_resize_title( hwnd, PtInRect( &rtitle_drag, m_pos ) );
   } break;
   case WM_LBUTTONDOWN: {
     wnd_resize_on( hwnd, m_pos, wnd_sz );
-
-    wnd_drag_on( hwnd, { 0, 6, wnd_sz.right - 75, 25 }, m_pos );
-
-    // simplify
-    RECT cls{ wnd_sz.right - 25, 5, wnd_sz.right - 05, 25 };
-    RECT max{ wnd_sz.right - 50, 5, wnd_sz.right - 25, 25 };
-    RECT min{ wnd_sz.right - 75, 5, wnd_sz.right - 50, 25 };
+    wnd_drag_on( hwnd, m_pos, PtInRect( &rtitle_drag, m_pos ) );
     wnd_title_clicked_cls( hwnd, PtInRect( &cls, m_pos ) );
     wnd_title_clicked_max( hwnd, PtInRect( &max, m_pos ) );
     wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );

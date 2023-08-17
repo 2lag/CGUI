@@ -3,8 +3,9 @@
 bool user_dragging = false;
 POINT duser_start{};
 
-void wnd_drag_on( HWND hwnd, RECT title_bar, POINT m_pos ) {
-  if( PtInRect( &title_bar, duser_start ) ) {
+void wnd_drag_on( HWND hwnd, POINT m_pos, bool mouse_over ) {
+  if( mouse_over ) {
+
     if( !is_maxd ) {
       GetClientRect( hwnd, &max_prev_sz );
       max_prev_pos = {

@@ -2,9 +2,9 @@
 
 /*
   optimize all functions/clean all code
-  make & build out menu bar
   add tps counter
-  build out text box ( using vectors ? )
+  build out text box ( vectors ? )
+  make & build out menu bar
   implement rest of menu bar funcs
   implement line nums and scrolling/scroll tracking
   handle keyboard shortcuts
@@ -12,17 +12,14 @@
   add syntax highlighting for cpp ( language server ? )
 */
 
-s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
-                    _In_opt_ HINSTANCE p_inst ,
-                    _In_     LPSTR     cmdline,
-                    _In_     s32       cmdshow) {
+s32 WINAPI WinMain( _In_     HINSTANCE inst    ,
+                    _In_opt_ HINSTANCE         ,
+                    _In_     LPSTR             ,
+                    _In_     s32       cmdshow ) {
   WNDCLASSEX wnd_cls {
     sizeof( WNDCLASSEX ),
     CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW,
-    wnd_proc,
-    0, 0,
-    inst,
-    0,
+    wnd_proc, 0, 0, inst, 0,
     LoadCursorW( 0, IDC_ARROW ),
     CreateSolidBrush( RGB( 32, 32, 32 ) ),
     L"type", L"type_class"
@@ -51,6 +48,5 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst   ,
     if( msg.message == WM_QUIT )
       break;
   }
-
   return (s32)msg.wParam;
 }

@@ -163,8 +163,8 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   );
 }
 
-void wnd_resize_title( HWND hwnd, RECT title_bar, POINT m_pos ) {
-  if( !PtInRect( &title_bar, m_pos ) )
+void wnd_resize_title( HWND hwnd, bool mouse_over ) {
+  if( !mouse_over )
     return;
 
   if( !is_maxd ) {

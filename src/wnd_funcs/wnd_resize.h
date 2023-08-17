@@ -18,5 +18,5 @@ void wnd_resize_get_side( POINT m_pos, RECT wnd_sz );
 void wnd_resize_get_cursor( POINT m_pos, RECT wnd_sz );
 void wnd_resize_on( HWND hwnd, POINT m_pos, RECT wnd_sz );
 void wnd_resize_off();
-void wnd_resize_title( HWND hwnd, RECT title_bar, POINT m_pos );
+void wnd_resize_title( HWND hwnd, bool mouse_over );
 void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz );
