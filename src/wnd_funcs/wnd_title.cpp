@@ -36,7 +36,7 @@ TextOutW( hdc, obj[ idx ].r.right - xoff, obj[ idx ].r.bottom - yoff, txt, 1 )
     DeleteObject( it.col );
 }
 
-void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
+void wnd_title_cls( HWND hwnd, bool mouse_over ) {
   if( mouse_over )
     ExitProcess( 0 );
 }
@@ -44,7 +44,7 @@ void wnd_title_clicked_cls( HWND hwnd, bool mouse_over ) {
 RECT max_prev_sz;
 POINT max_prev_pos;
 bool is_maxd = false;
-void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
+void wnd_title_max( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
 
@@ -100,7 +100,7 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
   }
 }
 
-void wnd_title_clicked_min( HWND hwnd, bool mouse_over ) {
+void wnd_title_min( HWND hwnd, bool mouse_over ) {
   if( mouse_over )
     ShowWindow( hwnd, SW_MINIMIZE );
 }

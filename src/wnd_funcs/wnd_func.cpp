@@ -7,7 +7,7 @@
 /*
   simplify/optimize all code ( code review !! )
     - wnd_title
-      - wnd_title_clicked_max
+      - wnd_title_max
     - wnd_resize
       - wnd_resize
       - wnd_resize_title
@@ -26,7 +26,7 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   GetCursorPos( &m_pos );
   ScreenToClient( hwnd, &m_pos );
 
-  RECT rtitle_drag { 0, 6, wnd_sz.right - 75, 25 },
+  RECT drag { 0, 6, wnd_sz.right - 75, 25 },
      cls { wnd_sz.right - 25, 5,
            wnd_sz.right - 05, 25
   }, max { wnd_sz.right - 50, 5,
@@ -47,14 +47,14 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
     return 0;
   } break;
   case WM_LBUTTONDBLCLK: {
-    wnd_resize_title( hwnd, PtInRect( &rtitle_drag, m_pos ) );
+    wnd_resize_title( hwnd, PtInRect( &drag, m_pos ) );
   } break;
   case WM_LBUTTONDOWN: {
     wnd_resize_on( hwnd, m_pos, wnd_sz );
-    wnd_drag_on( hwnd, m_pos, PtInRect( &rtitle_drag, m_pos ) );
-    wnd_title_clicked_cls( hwnd, PtInRect( &cls, m_pos ) );
-    wnd_title_clicked_max( hwnd, PtInRect( &max, m_pos ) );
-    wnd_title_clicked_min( hwnd, PtInRect( &min, m_pos ) );
+    wnd_drag_on( hwnd, m_pos, PtInRect( &drag, m_pos ) );
+    wnd_title_cls( hwnd, PtInRect( &cls, m_pos ) );
+    wnd_title_max( hwnd, PtInRect( &max, m_pos ) );
+    wnd_title_min( hwnd, PtInRect( &min, m_pos ) );
   } break;
   case WM_LBUTTONUP: {
     if( !user_resizing ) {

@@ -61,13 +61,13 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
 
   u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
 
-  bool is_fullscreen = wnd_sz.x == m_sz.x &&
-                       wnd_sz.y == m_sz.y,
-       is_halfscreen = wnd_sz.x == ( m_sz.x / 2 ) &&
-                       wnd_sz.y == m_sz.y,
-       is_quarterscr = wnd_sz.x == ( m_sz.x / 2 ) &&
-                       wnd_sz.y == ( m_sz.y / 2 );
-  if( is_fullscreen || is_halfscreen || is_quarterscr ) {
+  bool is_fullscreen    = wnd_sz.x == m_sz.x &&
+                          wnd_sz.y == m_sz.y,
+       is_halfscreen    = wnd_sz.x == ( m_sz.x / 2 ) &&
+                          wnd_sz.y == m_sz.y,
+       is_quarterscreen = wnd_sz.x == ( m_sz.x / 2 ) &&
+                          wnd_sz.y == ( m_sz.y / 2 );
+  if( is_fullscreen || is_halfscreen || is_quarterscreen ) {
     swp_flags = SWP_NOZORDER;
     f32 wnd_xper = (f32)m_pos.x / (f32)wnd_sz.x;
     salt nwnd_szx = max_prev_sz.right - max_prev_sz.left;
