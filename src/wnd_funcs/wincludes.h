@@ -27,3 +27,8 @@ inline POINT operator-( POINT &a ) {
 inline bool operator!( POINT &a ) {
   return ( a.x == 0 || a.y == 0 );
 }
+
+#define get_monitor_info( c_mon ) \
+MONITORINFO i_mon; \
+i_mon.cbSize = sizeof( i_mon ); \
+GetMonitorInfoW( c_mon, &i_mon )

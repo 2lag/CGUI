@@ -48,13 +48,11 @@ void wnd_title_clicked_max( HWND hwnd, bool mouse_over ) {
   if( !mouse_over )
     return;
 
-  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTOPRIMARY );
-  if( !is_maxd )
-    c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+  HMONITOR c_mon = MonitorFromWindow( hwnd,
+    is_maxd ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST
+  );
+  get_monitor_info( c_mon );
 
-  MONITORINFO i_mon;
-  i_mon.cbSize = sizeof( i_mon );
-  GetMonitorInfoW( c_mon, &i_mon );
   POINT mon_sz { 
     i_mon.rcWork.right - i_mon.rcWork.left,
     i_mon.rcWork.bottom - i_mon.rcWork.top

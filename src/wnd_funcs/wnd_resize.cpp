@@ -88,20 +88,18 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   POINT _wnd_sz {
     wnd_sz.right - wnd_sz.left + 2,
     wnd_sz.bottom - wnd_sz.top + 2
-  },
-  m_delta {
+  }, m_delta {
     m_pos.x - ruser_start.x,
     m_pos.y - ruser_start.y
-  },
-  wnd_pos {
+  }, wnd_pos {
     wnd_sz.left - 1,
     wnd_sz.top  - 1
   };
   ClientToScreen( hwnd, &wnd_pos );
 
-  auto wnd_adj_pos_sz = [&]( POINT p, POINT s ) {
-    wnd_pos += p;
-    _wnd_sz += s;
+  auto wnd_adj_pos_sz = [&]( POINT pos, POINT size ) {
+    wnd_pos += pos;
+    _wnd_sz += size;
   };
 
   switch( d_side ) {
@@ -137,9 +135,7 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   }
 
   HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-  MONITORINFO i_mon;
-  i_mon.cbSize = sizeof( i_mon );
-  GetMonitorInfoW( c_mon, &i_mon );
+  get_monitor_info( c_mon );
 
   if( wnd_pos.x < i_mon.rcWork.left ) {
     wnd_pos.x = i_mon.rcWork.left;
@@ -175,9 +171,8 @@ void wnd_resize_title( HWND hwnd, bool mouse_over ) {
     return;
 
   HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-  MONITORINFO i_mon;
-  i_mon.cbSize = sizeof( i_mon );
-  GetMonitorInfoW( c_mon, &i_mon );
+  get_monitor_info( c_mon );
+
   POINT mon_sz {
     i_mon.rcWork.right - i_mon.rcWork.left,
     i_mon.rcWork.bottom - i_mon.rcWork.top
@@ -202,7 +197,6 @@ void wnd_resize_title( HWND hwnd, bool mouse_over ) {
     
     return;
   }
-
   is_maxd = false;
 
   RECT r_wnd;
