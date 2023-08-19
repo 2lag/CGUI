@@ -1,13 +1,11 @@
 #include "wnd_func.h"
-// combine these in win_feats.h or smthn for cleanliness
+// combine these in wnd_feats.h or smthn for cleanliness
 #include "wnd_resize.h"
 #include "wnd_title.h"
 #include "wnd_drag.h"
 
 /*
   simplify/optimize all code ( code review !! )
-    - wnd_title
-      - wnd_title_max
     - wnd_resize
       - wnd_resize
       - wnd_resize_title

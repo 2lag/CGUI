@@ -1,8 +1,6 @@
 #pragma once
 #include "wincludes.h"
 
-#include "../typedef.h"
-
 enum WND_RESIZE_CASES {
   EDGE_TOP_LEFT  = 1,
   EDGE_TOP         ,

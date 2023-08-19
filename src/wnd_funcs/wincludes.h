@@ -9,19 +9,34 @@
 #include <iostream>
 #endif
 
+#include "../typedef.h"
+
 extern bool  user_resizing;
 extern POINT max_prev_pos;
 extern RECT  max_prev_sz;
 extern bool  is_maxd;
 
-inline POINT operator+=( POINT &a, const POINT &b ) {
+inline POINT operator+=( POINT &a, const POINT b ) {
   a.x += b.x;
   a.y += b.y;
   return a;
 }
 
-inline POINT operator-( POINT &a ) {
+inline POINT operator-( POINT a ) {
   return { -a.x, -a.y };
+}
+
+inline POINT operator-( POINT &a, const POINT &b ) {
+  a.x -= b.x;
+  a.y -= b.y;
+  return a;
+}
+
+inline POINT operator/( const POINT& a, int b ) {
+  POINT r;
+  r.x = a.x / b;
+  r.y = a.y / b;
+  return r;
 }
 
 inline bool operator!( POINT &a ) {

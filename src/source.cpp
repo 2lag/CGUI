@@ -3,13 +3,6 @@
 /*
   optimize all functions/clean all code
   add tps counter
-  build out text box ( vectors ? )
-  make & build out menu bar
-  implement rest of menu bar funcs
-  implement line nums and scrolling/scroll tracking
-  handle keyboard shortcuts
-  add font sizes & stuff like bold/italic/strikethru/etc
-  add syntax highlighting for cpp ( language server ? )
 */
 
 s32 WINAPI WinMain( _In_     HINSTANCE inst    ,

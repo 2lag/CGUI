@@ -206,12 +206,8 @@ void wnd_resize_title( HWND hwnd, bool mouse_over ) {
     max_prev_sz.bottom - max_prev_sz.top
   };
 
-  if( !max_prev_pos ) {
-    max_prev_pos = {
-      ( mon_sz.x / 2 ) - ( wnd_sz.x / 2 ),
-      ( mon_sz.y / 2 ) - ( wnd_sz.y / 2 )
-    };
-  }
+  if( !max_prev_pos )
+    max_prev_pos = ( mon_sz - wnd_sz ) / 2;
 
   SetWindowPos( hwnd, 0,
     max_prev_pos.x,

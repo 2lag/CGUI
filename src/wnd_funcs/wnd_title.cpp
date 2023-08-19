@@ -56,11 +56,11 @@ void wnd_title_max( HWND hwnd, bool mouse_over ) {
   POINT mon_sz { 
     i_mon.rcWork.right - i_mon.rcWork.left,
     i_mon.rcWork.bottom - i_mon.rcWork.top
-  };
+  },
+  nwnd_ps{},
+  nwnd_sz{};
 
   if( !is_maxd ) {
-    is_maxd = true;
-
     GetClientRect( hwnd, &max_prev_sz );
     max_prev_pos = {
       max_prev_sz.left,
@@ -68,36 +68,30 @@ void wnd_title_max( HWND hwnd, bool mouse_over ) {
     };
     ClientToScreen( hwnd, &max_prev_pos );
 
-    SetWindowPos( hwnd, 0,
+    nwnd_ps = {
       i_mon.rcWork.left,
-      i_mon.rcWork.top,
-      mon_sz.x, mon_sz.y,
-      SWP_NOZORDER
-    );
+      i_mon.rcWork.top
+    },
+    nwnd_sz = mon_sz;
   } else {
-    is_maxd = false;
-
-    RECT r_wnd;
-    GetClientRect( hwnd, &r_wnd );
     POINT wnd_sz {
       max_prev_sz.right - max_prev_sz.left,
       max_prev_sz.bottom - max_prev_sz.top
     };
 
-    if( !max_prev_pos ) {
-      max_prev_pos = {
-        ( mon_sz.x / 2 ) - ( wnd_sz.x / 2 ),
-        ( mon_sz.y / 2 ) - ( wnd_sz.y / 2 )
-      };
-    }
+    if( !max_prev_pos )
+      max_prev_pos = ( mon_sz - wnd_sz ) / 2;
 
-    SetWindowPos( hwnd, 0,
-      max_prev_pos.x,
-      max_prev_pos.y,
-      wnd_sz.x, wnd_sz.y,
-      SWP_NOZORDER
-    );
+    nwnd_ps = max_prev_pos,
+    nwnd_sz = wnd_sz;
   }
+  is_maxd = !is_maxd;
+
+  SetWindowPos( hwnd, 0,
+    nwnd_ps.x, nwnd_ps.y,
+    nwnd_sz.x, nwnd_sz.y,
+    SWP_NOZORDER
+  );
 }
 
 void wnd_title_min( HWND hwnd, bool mouse_over ) {
