@@ -42,6 +42,10 @@ inline POINT operator-( POINT a ) {
   return { -a.x, -a.y };
 }
 
+inline bool operator==( POINT a, POINT b ) {
+  return( a.x == b.x && a.y == b.y );
+}
+
 inline POINT operator-( const POINT &a, const POINT &b ) {
   POINT r;
   r.x = a.x - b.x;
