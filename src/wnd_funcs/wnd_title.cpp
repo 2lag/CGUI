@@ -53,31 +53,19 @@ void wnd_title_max( HWND hwnd, bool mouse_over ) {
   );
   get_monitor_info( c_mon );
 
-  POINT mon_sz { 
-    i_mon.rcWork.right - i_mon.rcWork.left,
-    i_mon.rcWork.bottom - i_mon.rcWork.top
-  },
-  nwnd_ps{},
-  nwnd_sz{};
+  POINT mon_sz = to_sz_point( i_mon.rcWork ),
+       nwnd_ps{},
+       nwnd_sz{};
 
   if( !is_maxd ) {
     GetClientRect( hwnd, &max_prev_sz );
-    max_prev_pos = {
-      max_prev_sz.left,
-      max_prev_sz.top
-    };
+    max_prev_pos = to_pos_point( max_prev_sz );
     ClientToScreen( hwnd, &max_prev_pos );
 
-    nwnd_ps = {
-      i_mon.rcWork.left,
-      i_mon.rcWork.top
-    },
+    nwnd_ps = to_pos_point( i_mon.rcWork ),
     nwnd_sz = mon_sz;
   } else {
-    POINT wnd_sz {
-      max_prev_sz.right - max_prev_sz.left,
-      max_prev_sz.bottom - max_prev_sz.top
-    };
+    POINT wnd_sz = to_sz_point( max_prev_sz );
 
     if( !max_prev_pos )
       max_prev_pos = ( mon_sz - wnd_sz ) / 2;

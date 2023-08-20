@@ -6,10 +6,7 @@ POINT ruser_start{};
 s32 d_side{};
 
 void wnd_resize_get_side( POINT m_pos, RECT wnd_sz ) {
-  POINT pwn_sz {
-    wnd_sz.right - wnd_sz.left,
-    wnd_sz.bottom - wnd_sz.top
-  };
+  POINT pwn_sz = to_sz_point( wnd_sz );
 
   bool on_left   = ( m_pos.x <= 5 ),
        on_top    = ( m_pos.y <= 5 ),
@@ -31,10 +28,7 @@ void wnd_resize_get_side( POINT m_pos, RECT wnd_sz ) {
 }
 
 void wnd_resize_get_cursor( POINT m_pos, RECT wnd_sz ) {
-  POINT pwn_sz {
-    wnd_sz.right - wnd_sz.left,
-    wnd_sz.bottom - wnd_sz.top
-  };
+  POINT pwn_sz = to_sz_point( wnd_sz );
 
   bool on_left   = ( m_pos.x <= 5 ),
        on_top    = ( m_pos.y <= 5 ),
@@ -79,84 +73,74 @@ void wnd_resize_off() {
   ReleaseCapture();
 }
 
+void wnd_resize_check_bounds( HWND hwnd, LPPOINT wnd_pos, LPPOINT wnd_sz, POINT m_delta ) {
+  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
+  get_monitor_info( c_mon );
+
+  if( wnd_pos->x < i_mon.rcWork.left ) {
+    wnd_pos->x = i_mon.rcWork.left;
+    wnd_sz->x += m_delta.x;
+  }
+  if( wnd_pos->y < i_mon.rcWork.top ) {
+    wnd_pos->y = i_mon.rcWork.top;
+    wnd_sz->y += m_delta.y;
+  }
+  if( wnd_pos->x + wnd_sz->x >= i_mon.rcWork.right )
+    wnd_sz->x = i_mon.rcWork.right - wnd_pos->x;
+  if( wnd_pos->y + wnd_sz->y >= i_mon.rcWork.bottom )
+    wnd_sz->y = i_mon.rcWork.bottom - wnd_pos->y;
+
+  if( wnd_sz->x < 200 ) {
+    wnd_sz->x = 200;
+    wnd_pos->x -= ( m_delta.x > 0 ) ? m_delta.x : 0;
+  }
+  if( wnd_sz->y < 200 ) {
+    wnd_sz->y = 200;
+    wnd_pos->y -= ( m_delta.y > 0 ) ? m_delta.y : 0;
+  }
+}
+
 void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   if( !d_side || !user_resizing ) {
     ruser_start = m_pos;
     return;
   }
 
-  POINT _wnd_sz {
-    wnd_sz.right - wnd_sz.left + 2,
-    wnd_sz.bottom - wnd_sz.top + 2
-  },
-  m_delta { m_pos - ruser_start },
-  wnd_pos {
-    wnd_sz.left - 1,
-    wnd_sz.top  - 1
-  };
+  POINT m_delta { m_pos - ruser_start },
+        wnd_pos = ( to_pos_point( wnd_sz ) -= 1 ),
+        _wnd_sz = ( to_sz_point ( wnd_sz ) += 2 );
+
   ClientToScreen( hwnd, &wnd_pos );
 
   auto wnd_adj = [&]( POINT pos, POINT size ) {
     wnd_pos += pos;
     _wnd_sz += size;
+  };  
+
+  std::unordered_map<s32, std::function<void()>> edge_actions {
+    { EDGE_TOP_LEFT    ,
+      { [&](){ wnd_adj( m_delta, -m_delta ); } } },
+    { EDGE_TOP         ,
+      { [&](){ wnd_adj( { 0, m_delta.y }, { 0, -m_delta.y } ); } } },
+    { EDGE_TOP_RIGHT   ,
+      { [&](){ wnd_adj( { 0, m_delta.y }, { m_delta.x, -m_delta.y } ); ruser_start.x = m_pos.x; } } },
+    { EDGE_RIGHT       ,
+      { [&](){ wnd_adj( {},{ m_delta.x, 0 } ); ruser_start.x = m_pos.x; } } },
+    { EDGE_BOTTOM_RIGHT,
+      { [&](){ wnd_adj( {}, m_delta ); ruser_start = m_pos; } } },
+    { EDGE_BOTTOM      ,
+      { [&](){ wnd_adj( {}, { 0, m_delta.y } ); ruser_start.y = m_pos.y; } } },
+    { EDGE_BOTTOM_LEFT ,
+      { [&](){ wnd_adj( { m_delta.x, 0 }, { -m_delta.x, m_delta.y } ); ruser_start.y = m_pos.y; } } },
+    { EDGE_LEFT        ,
+      { [&](){ wnd_adj( { m_delta.x, 0 }, { -m_delta.x, 0 } ); } } }
   };
 
-  switch( d_side ) {
-  case EDGE_TOP_LEFT:
-    wnd_adj( m_delta, -m_delta );
-    break;
-  case EDGE_TOP:
-    wnd_adj( { 0, m_delta.y }, { 0, -m_delta.y } );
-    break;
-  case EDGE_TOP_RIGHT:
-    wnd_adj( { 0, m_delta.y }, { m_delta.x, -m_delta.y } );
-    ruser_start.x = m_pos.x;
-    break;
-  case EDGE_RIGHT:
-    wnd_adj( {},{ m_delta.x, 0 } );
-    ruser_start.x = m_pos.x;
-    break;
-  case EDGE_BOTTOM_RIGHT:
-    wnd_adj( {}, m_delta );
-    ruser_start = m_pos;
-    break;
-  case EDGE_BOTTOM:
-    wnd_adj( {}, { 0, m_delta.y } );
-    ruser_start.y = m_pos.y;
-    break;
-  case EDGE_BOTTOM_LEFT:
-    wnd_adj( { m_delta.x, 0 }, { -m_delta.x, m_delta.y } );
-    ruser_start.y = m_pos.y;
-    break;
-  case EDGE_LEFT:
-    wnd_adj( { m_delta.x, 0 }, { -m_delta.x, 0 } );
-    break;
-  }
+  auto it = edge_actions.find( d_side );
+  if( it != edge_actions.end() )
+    it->second();
 
-  HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
-  get_monitor_info( c_mon );
-
-  if( wnd_pos.x < i_mon.rcWork.left ) {
-    wnd_pos.x = i_mon.rcWork.left;
-    _wnd_sz.x += m_delta.x;
-  }
-  if( wnd_pos.y < i_mon.rcWork.top ) {
-    wnd_pos.y = i_mon.rcWork.top;
-    _wnd_sz.y += m_delta.y;
-  }
-  if( wnd_pos.x + _wnd_sz.x >= i_mon.rcWork.right )
-    _wnd_sz.x = i_mon.rcWork.right - wnd_pos.x;
-  if( wnd_pos.y + _wnd_sz.y >= i_mon.rcWork.bottom )
-    _wnd_sz.y = i_mon.rcWork.bottom - wnd_pos.y;
-
-  if( _wnd_sz.x < 200 ) {
-    _wnd_sz.x = 200;
-    wnd_pos.x -= ( m_delta.x > 0 ) ? m_delta.x : 0;
-  }
-  if( _wnd_sz.y < 200 ) {
-    _wnd_sz.y = 200;
-    wnd_pos.y -= ( m_delta.y > 0 ) ? m_delta.y : 0;
-  }
+  wnd_resize_check_bounds( hwnd, &wnd_pos, &_wnd_sz, m_delta );
 
   SetWindowPos( hwnd, 0,
     wnd_pos.x, wnd_pos.y,
@@ -172,31 +156,19 @@ void wnd_resize_title( HWND hwnd, bool mouse_over ) {
   HMONITOR c_mon = MonitorFromWindow( hwnd, MONITOR_DEFAULTTONEAREST );
   get_monitor_info( c_mon );
 
-  POINT mon_sz {
-    i_mon.rcWork.right - i_mon.rcWork.left,
-    i_mon.rcWork.bottom - i_mon.rcWork.top
-  },
-  nwnd_ps{},
-  nwnd_sz{};
+  POINT mon_sz = to_sz_point( i_mon.rcWork ),
+       nwnd_ps{},
+       nwnd_sz{};
 
   if( !is_maxd ) {
     GetClientRect( hwnd, &max_prev_sz );
-    max_prev_pos = {
-      max_prev_sz.left,
-      max_prev_sz.top
-    };
+    max_prev_pos = to_pos_point( max_prev_sz );
     ClientToScreen( hwnd, &max_prev_pos );
 
-    nwnd_ps = {
-      i_mon.rcWork.left,
-      i_mon.rcWork.top
-    },
+    nwnd_ps = to_pos_point( i_mon.rcWork ),
     nwnd_sz = mon_sz;
   } else {
-    POINT wnd_sz {
-      max_prev_sz.right - max_prev_sz.left,
-      max_prev_sz.bottom - max_prev_sz.top
-    };
+    POINT wnd_sz = to_sz_point( max_prev_sz );
 
     if( !max_prev_pos )
       max_prev_pos = ( mon_sz - wnd_sz ) / 2;

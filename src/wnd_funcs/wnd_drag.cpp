@@ -9,10 +9,7 @@ void wnd_drag_on( HWND hwnd, POINT m_pos, bool mouse_over ) {
 
   if( !is_maxd ) {
     GetClientRect( hwnd, &max_prev_sz );
-    max_prev_pos = {
-      max_prev_sz.left,
-      max_prev_sz.top
-    };
+    max_prev_pos = to_pos_point( max_prev_sz );
     ClientToScreen( hwnd, &max_prev_pos );
   }
 
@@ -42,22 +39,10 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   get_monitor_info( c_mon );
 
 
-  POINT m_delta {
-    m_pos.x - duser_start.x,
-    m_pos.y - duser_start.y
-  },
-  wnd_sz {
-    r_wnd.right - r_wnd.left,
-    r_wnd.bottom - r_wnd.top
-  },
-  m_sz {
-    i_mon.rcWork.right - i_mon.rcWork.left,
-    i_mon.rcWork.bottom - i_mon.rcWork.top
-  },
-  wnd_pos {
-    r_wnd.left + m_delta.x,
-    r_wnd.top  + m_delta.y
-  };
+  POINT m_delta = m_pos - duser_start,
+         wnd_sz = to_sz_point( r_wnd ),
+           m_sz = to_sz_point( i_mon.rcWork ),
+        wnd_pos = to_pos_point( r_wnd ) + m_delta;
 
   u32 swp_flags = SWP_NOSIZE | SWP_NOZORDER;
 
@@ -100,14 +85,8 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   }
 
   get_monitor_info( pc_mon );
-  POINT mon_sz {
-    i_mon.rcWork.right - i_mon.rcWork.left,
-    i_mon.rcWork.bottom - i_mon.rcWork.top
-  },
-  pmon_sz {
-    pm_rect.right - pm_rect.left,
-    pm_rect.bottom - pm_rect.top
-  };
+  POINT mon_sz = to_sz_point( i_mon.rcWork ),
+       pmon_sz = to_sz_point( pm_rect );
 
   salt sm_pos_adj;
   if( sm_pos.x < 0 )
@@ -121,18 +100,19 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
                         sm_pos_adj > salt( (f32)mon_sz.x * 0.2f ) &&
                         sm_pos_adj < salt( (f32)mon_sz.x * 0.8f ) );
 
-  if( within_range ) {
-    is_maxd = true;
+  if( !within_range )
+    return;
 
-    GetClientRect( hwnd, &max_prev_sz );
+  is_maxd = true;
 
-    SetWindowPos( hwnd, 0,
-      i_mon.rcWork.left,
-      i_mon.rcWork.top,
-      mon_sz.x, mon_sz.y,
-      SWP_NOZORDER
-    );
-  }
+  GetClientRect( hwnd, &max_prev_sz );
+
+  SetWindowPos( hwnd, 0,
+    i_mon.rcWork.left,
+    i_mon.rcWork.top,
+    mon_sz.x, mon_sz.y,
+    SWP_NOZORDER
+  );
 }
 
 void wnd_drag_half( HWND hwnd, POINT m_pos ) {
@@ -149,24 +129,16 @@ void wnd_drag_half( HWND hwnd, POINT m_pos ) {
     if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
       pm_rect = i_mon.rcWork;
       pc_mon = c_mon;
-
-      monitor_offset.x = i_mon.rcWork.left;
-      monitor_offset.y = i_mon.rcWork.top;
+      monitor_offset = to_pos_point( i_mon.rcWork );
     }
   }
 
   get_monitor_info( pc_mon );
-  POINT mon_sz {
-    i_mon.rcWork.right - i_mon.rcWork.left,
-    i_mon.rcWork.bottom - i_mon.rcWork.top
-  },
-  pmon_sz {
-    pm_rect.right - pm_rect.left,
-    pm_rect.bottom - pm_rect.top
-  },
-  sm_pos_adj {
-    ( sm_pos.x < 0 ) ? sm_pos.x + pmon_sz.x : sm_pos.x,
-    sm_pos.y - monitor_offset.y
+  POINT mon_sz = to_sz_point( i_mon.rcWork ),
+       pmon_sz = to_sz_point( pm_rect ),
+    sm_pos_adj {
+      ( sm_pos.x < 0 ) ? sm_pos.x + pmon_sz.x : sm_pos.x,
+      sm_pos.y - monitor_offset.y
   };
 
   if( sm_pos.x > pmon_sz.x )
@@ -213,24 +185,15 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
     if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
       pm_rect = i_mon.rcWork;
       pc_mon = c_mon;
-
-      monitor_offset.x = i_mon.rcWork.left;
-      monitor_offset.y = i_mon.rcWork.top;
+      monitor_offset = to_pos_point( i_mon.rcWork );
     }
   }
 
   get_monitor_info( pc_mon );
 
-  POINT mon_sz {
-    i_mon.rcWork.right - i_mon.rcWork.left,
-    i_mon.rcWork.bottom - i_mon.rcWork.top
-  },
-    pmon_sz {
-    pm_rect.right - pm_rect.left,
-    pm_rect.bottom - pm_rect.top
-  };
-
-  POINT sm_pos_adj{
+  POINT mon_sz = to_sz_point( i_mon.rcWork ),
+       pmon_sz = to_sz_point( pm_rect ),
+    sm_pos_adj {
     ( sm_pos.x < 0 ) ? sm_pos.x + pmon_sz.x : sm_pos.x,
     sm_pos.y - monitor_offset.y
   };
