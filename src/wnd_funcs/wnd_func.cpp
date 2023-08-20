@@ -8,7 +8,6 @@
   simplify/optimize all code ( code review !! )
     - wnd_resize
       - wnd_resize
-      - wnd_resize_title
     - wnd_drag
       - wnd_drag_quart/half/max
         - adj y for wnd_drag_max

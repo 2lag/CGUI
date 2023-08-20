@@ -88,49 +88,48 @@ void wnd_resize( HWND hwnd, POINT m_pos, RECT wnd_sz ) {
   POINT _wnd_sz {
     wnd_sz.right - wnd_sz.left + 2,
     wnd_sz.bottom - wnd_sz.top + 2
-  }, m_delta {
-    m_pos.x - ruser_start.x,
-    m_pos.y - ruser_start.y
-  }, wnd_pos {
+  },
+  m_delta { m_pos - ruser_start },
+  wnd_pos {
     wnd_sz.left - 1,
     wnd_sz.top  - 1
   };
   ClientToScreen( hwnd, &wnd_pos );
 
-  auto wnd_adj_pos_sz = [&]( POINT pos, POINT size ) {
+  auto wnd_adj = [&]( POINT pos, POINT size ) {
     wnd_pos += pos;
     _wnd_sz += size;
   };
 
   switch( d_side ) {
   case EDGE_TOP_LEFT:
-    wnd_adj_pos_sz( m_delta, -m_delta );
+    wnd_adj( m_delta, -m_delta );
     break;
   case EDGE_TOP:
-    wnd_adj_pos_sz( { 0, m_delta.y }, { 0, -m_delta.y } );
+    wnd_adj( { 0, m_delta.y }, { 0, -m_delta.y } );
     break;
   case EDGE_TOP_RIGHT:
-    wnd_adj_pos_sz( { 0, m_delta.y }, { m_delta.x, -m_delta.y } );
+    wnd_adj( { 0, m_delta.y }, { m_delta.x, -m_delta.y } );
     ruser_start.x = m_pos.x;
     break;
   case EDGE_RIGHT:
-    wnd_adj_pos_sz( {},{ m_delta.x, 0 } );
+    wnd_adj( {},{ m_delta.x, 0 } );
     ruser_start.x = m_pos.x;
     break;
   case EDGE_BOTTOM_RIGHT:
-    wnd_adj_pos_sz( {}, m_delta );
+    wnd_adj( {}, m_delta );
     ruser_start = m_pos;
     break;
   case EDGE_BOTTOM:
-    wnd_adj_pos_sz( {}, { 0, m_delta.y } );
+    wnd_adj( {}, { 0, m_delta.y } );
     ruser_start.y = m_pos.y;
     break;
   case EDGE_BOTTOM_LEFT:
-    wnd_adj_pos_sz( { m_delta.x, 0 }, { -m_delta.x, m_delta.y } );
+    wnd_adj( { m_delta.x, 0 }, { -m_delta.x, m_delta.y } );
     ruser_start.y = m_pos.y;
     break;
   case EDGE_LEFT:
-    wnd_adj_pos_sz( { m_delta.x, 0 }, { -m_delta.x, 0 } );
+    wnd_adj( { m_delta.x, 0 }, { -m_delta.x, 0 } );
     break;
   }
 
@@ -176,11 +175,11 @@ void wnd_resize_title( HWND hwnd, bool mouse_over ) {
   POINT mon_sz {
     i_mon.rcWork.right - i_mon.rcWork.left,
     i_mon.rcWork.bottom - i_mon.rcWork.top
-  };
+  },
+  nwnd_ps{},
+  nwnd_sz{};
 
   if( !is_maxd ) {
-    is_maxd = true;
-
     GetClientRect( hwnd, &max_prev_sz );
     max_prev_pos = {
       max_prev_sz.left,
@@ -188,31 +187,28 @@ void wnd_resize_title( HWND hwnd, bool mouse_over ) {
     };
     ClientToScreen( hwnd, &max_prev_pos );
 
-    SetWindowPos( hwnd, 0,
+    nwnd_ps = {
       i_mon.rcWork.left,
-      i_mon.rcWork.top,
-      mon_sz.x, mon_sz.y,
-      SWP_NOZORDER
-    );
-    
-    return;
+      i_mon.rcWork.top
+    },
+    nwnd_sz = mon_sz;
+  } else {
+    POINT wnd_sz {
+      max_prev_sz.right - max_prev_sz.left,
+      max_prev_sz.bottom - max_prev_sz.top
+    };
+
+    if( !max_prev_pos )
+      max_prev_pos = ( mon_sz - wnd_sz ) / 2;
+
+    nwnd_ps = max_prev_pos,
+    nwnd_sz = wnd_sz;
   }
-  is_maxd = false;
-
-  RECT r_wnd;
-  GetClientRect( hwnd, &r_wnd );
-  POINT wnd_sz {
-    max_prev_sz.right - max_prev_sz.left,
-    max_prev_sz.bottom - max_prev_sz.top
-  };
-
-  if( !max_prev_pos )
-    max_prev_pos = ( mon_sz - wnd_sz ) / 2;
+  is_maxd = !is_maxd;
 
   SetWindowPos( hwnd, 0,
-    max_prev_pos.x,
-    max_prev_pos.y,
-    wnd_sz.x, wnd_sz.y,
+    nwnd_ps.x, nwnd_ps.y,
+    nwnd_sz.x, nwnd_sz.y,
     SWP_NOZORDER
   );
 }

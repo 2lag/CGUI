@@ -238,8 +238,6 @@ void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
   if( sm_pos.x > pmon_sz.x )
     sm_pos_adj.x = sm_pos.x - ( pm_rect.right - mon_sz.x );
 
-  std::cout << sm_pos_adj.x << " " << sm_pos_adj.y << std::endl;
-
   bool within_tl_range = ( sm_pos_adj.y <= 20 &&
                            sm_pos_adj.x <= 20 ),
        within_tr_range = ( sm_pos_adj.y <= 20 &&
