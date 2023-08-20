@@ -1,5 +1,5 @@
 #pragma once
-#include "wincludes.h"
+#include "../wincludes.h"
 
 enum WND_RESIZE_CASES {
   EDGE_TOP_LEFT  = 1,

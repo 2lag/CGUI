@@ -1,4 +1,4 @@
-#include "wnd_funcs/wnd_func.h"
+#include "wnd/wnd_func.h"
 
 /*
   optimize all functions/clean all code

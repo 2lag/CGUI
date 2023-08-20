@@ -1,8 +1,5 @@
 #include "wnd_func.h"
-// combine these in wnd_feats.h or smthn for cleanliness
-#include "wnd_resize.h"
-#include "wnd_title.h"
-#include "wnd_drag.h"
+#include "funcs/wnd_includes.h"
 
 /*
   simplify/optimize all code ( code review !! )

@@ -1,5 +1,5 @@
 #pragma once
-#include "wincludes.h"
+#include "../wincludes.h"
 
 enum wnd_col {
   COL_D_GRY = RGB(  32,  32,  32 ),
