@@ -173,12 +173,14 @@
   <ItemGroup>
     <ClCompile Include="src\source.cpp" />
     <ClCompile Include="src\wnd\funcs\wnd_drag.cpp" />
+    <ClCompile Include="src\wnd\funcs\wnd_tps.cpp" />
     <ClCompile Include="src\wnd\funcs\wnd_resize.cpp" />
     <ClCompile Include="src\wnd\funcs\wnd_title.cpp" />
     <ClCompile Include="src\wnd\wnd_func.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\typedef.h" />
+    <ClInclude Include="src\wnd\funcs\wnd_tps.h" />
     <ClInclude Include="src\wnd\funcs\wnd_includes.h" />
     <ClInclude Include="src\wnd\wincludes.h" />
     <ClInclude Include="src\wnd\funcs\wnd_drag.h" />

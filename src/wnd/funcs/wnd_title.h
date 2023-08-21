@@ -1,12 +1,6 @@
 #pragma once
 #include "../wincludes.h"
 
-enum wnd_col {
-  COL_D_GRY = RGB(  32,  32,  32 ),
-  COL_L_GRY = RGB( 120, 120, 120 ),
-  COL_D_RED = RGB(  64,  32,  32 ),
-};
-
 struct wnd_obj {
   RECT r;
   HBRUSH col;

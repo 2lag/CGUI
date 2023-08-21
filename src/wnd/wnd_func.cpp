@@ -1,12 +1,6 @@
 #include "wnd_func.h"
 #include "funcs/wnd_includes.h"
 
-/*
-  simplify/optimize all code ( code review !! )
-    - wincludes.h
-  add tps counter
-*/
-
 LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   RECT wnd_sz;
   GetClientRect( hwnd, &wnd_sz );
@@ -23,7 +17,9 @@ LRESULT wnd_proc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) {
   }, min { wnd_sz.right - 75, 5,
            wnd_sz.right - 50, 25
   };
-  
+
+  wnd_tps_draw( hwnd, wnd_sz );
+
 #ifdef _DEBUG
   AllocConsole();
   FILE* new_std;

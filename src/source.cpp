@@ -1,4 +1,5 @@
 #include "wnd/wnd_func.h"
+#include "wnd/funcs/wnd_tps.h"
 
 s32 WINAPI WinMain( _In_     HINSTANCE inst    ,
                     _In_opt_ HINSTANCE         ,
@@ -28,13 +29,15 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst    ,
 
   MSG msg;
   while( true ) {
-    while( PeekMessageW( &msg, 0, 0, 0, PM_REMOVE ) ) {
+    while( PeekMessageW( &msg, nullptr, 0, 0, PM_REMOVE ) ) {
       TranslateMessage( &msg );
       DispatchMessageW( &msg );
     }
 
     if( msg.message == WM_QUIT )
       break;
+
+    wnd_tps_calc();
   }
   return (s32)msg.wParam;
 }

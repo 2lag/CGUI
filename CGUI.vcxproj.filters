@@ -30,6 +30,9 @@
     <ClCompile Include="src\wnd\funcs\wnd_resize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\wnd\funcs\wnd_tps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\typedef.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\wnd\funcs\wnd_includes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wnd\funcs\wnd_tps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
