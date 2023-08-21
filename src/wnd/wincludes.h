@@ -31,6 +31,13 @@ inline POINT operator+=( const POINT a, s32 b ) {
   return r;
 }
 
+inline POINT operator+( const POINT &a, const POINT &b ) {
+  POINT r;
+  r.x = a.x + b.x;
+  r.y = a.y + b.y;
+  return r;
+}
+
 inline POINT operator-=( const POINT a, s32 b ) {
   POINT r;
   r.x = a.x - b;
@@ -42,10 +49,6 @@ inline POINT operator-( POINT a ) {
   return { -a.x, -a.y };
 }
 
-inline bool operator==( POINT a, POINT b ) {
-  return( a.x == b.x && a.y == b.y );
-}
-
 inline POINT operator-( const POINT &a, const POINT &b ) {
   POINT r;
   r.x = a.x - b.x;
@@ -53,11 +56,8 @@ inline POINT operator-( const POINT &a, const POINT &b ) {
   return r;
 }
 
-inline POINT operator+( const POINT &a, const POINT &b ) {
-  POINT r;
-  r.x = a.x + b.x;
-  r.y = a.y + b.y;
-  return r;
+inline bool operator==( POINT a, POINT b ) {
+  return( a.x == b.x && a.y == b.y );
 }
 
 inline POINT operator/( const POINT &a, s32 b ) {

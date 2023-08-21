@@ -1,10 +1,5 @@
 #include "wnd/wnd_func.h"
 
-/*
-  optimize all functions/clean all code
-  add tps counter
-*/
-
 s32 WINAPI WinMain( _In_     HINSTANCE inst    ,
                     _In_opt_ HINSTANCE         ,
                     _In_     LPSTR             ,
@@ -15,13 +10,13 @@ s32 WINAPI WinMain( _In_     HINSTANCE inst    ,
     wnd_proc, 0, 0, inst, 0,
     LoadCursorW( 0, IDC_ARROW ),
     CreateSolidBrush( RGB( 32, 32, 32 ) ),
-    L"type", L"type_class"
+    L"CGUI", L"cgui_class"
   };
 
   RegisterClassExW( &wnd_cls );
 
   HWND hwnd = CreateWindowExW( 0,
-    L"type_class", L"type",
+    L"cgui_class", L"CGUI",
     WS_POPUPWINDOW,
     100, 100,
     420, 420,

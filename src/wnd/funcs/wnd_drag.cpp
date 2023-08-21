@@ -66,7 +66,7 @@ void wnd_drag( HWND hwnd, POINT m_pos ) {
   );
 }
 
-void wnd_drag_max( HWND hwnd, POINT m_pos ) {
+void wnd_drag_resize( HWND hwnd, POINT m_pos ) {
   POINT sm_pos;
   GetCursorPos( &sm_pos );
 
@@ -85,229 +85,84 @@ void wnd_drag_max( HWND hwnd, POINT m_pos ) {
   }
 
   get_monitor_info( pc_mon );
-  POINT mon_sz = to_sz_point( i_mon.rcWork ),
-       pmon_sz = to_sz_point( pm_rect ),
-    sm_pos_adj {
-    ( sm_pos.x < 0 ) ? sm_pos.x + pmon_sz.x : sm_pos.x,
-    sm_pos.y - monitor_offset.y
+  POINT nwnd_sz{},
+       nwnd_pos{},
+         mon_sz = to_sz_point( i_mon.rcWork ),
+        pmon_sz = to_sz_point( pm_rect ),
+     sm_pos_adj {
+       sm_pos.x < 0 ? sm_pos.x + pmon_sz.x : sm_pos.x,
+       sm_pos.y - monitor_offset.y
   };
 
   if( sm_pos.x > pmon_sz.x )
     sm_pos_adj.x = sm_pos.x - ( pm_rect.right - mon_sz.x );
 
-  bool within_range = ( sm_pos_adj.y <= i_mon.rcWork.top &&
-                        sm_pos_adj.x > 20 &&
-                        sm_pos_adj.x < mon_sz.x - 20 );
+  // lord forgive me
+  bool within_max_range = ( sm_pos_adj.y <= i_mon.rcWork.top &&
+                            sm_pos_adj.x > 20                &&
+                            sm_pos_adj.x < mon_sz.x - 20     ),
+     within_lhalf_range = ( sm_pos_adj.y > 20                &&
+                            sm_pos_adj.y < mon_sz.y - 20     &&
+                            sm_pos_adj.x <= 20               ),
+     within_rhalf_range = ( sm_pos_adj.y > 20                &&
+                            sm_pos_adj.y < mon_sz.y - 20     &&
+                            sm_pos_adj.x >= mon_sz.x - 20    ),
+   within_lcorner_range = ( ( sm_pos_adj.y <= 20             ||
+                            sm_pos_adj.y >= mon_sz.y - 20  ) &&
+                            sm_pos_adj.x <= 20               ),
+   within_tcorner_range = ( ( sm_pos_adj.x <= 20             ||
+                            sm_pos_adj.x >= mon_sz.x - 20  ) &&
+                            sm_pos_adj.y <= 20               ),
+   within_rcorner_range = ( ( sm_pos_adj.y <= 20             ||
+                            sm_pos_adj.y >= mon_sz.y - 20  ) &&
+                            sm_pos_adj.x >= mon_sz.x - 20    ),
+   within_bcorner_range = ( ( sm_pos_adj.x <= 20             ||
+                            sm_pos_adj.x >= mon_sz.x - 20  ) &&
+                            sm_pos.y >= mon_sz.y - 20        ),
+           within_range =  within_max_range                  ||
+                           within_lhalf_range                ||
+                           within_rhalf_range                ||
+                           within_lcorner_range              ||
+                           within_tcorner_range              ||
+                           within_rcorner_range              ||
+                           within_bcorner_range;
 
   if( !within_range )
     return;
 
   is_maxd = true;
-
   GetClientRect( hwnd, &max_prev_sz );
 
+  if( within_max_range ) {
+    nwnd_pos = to_pos_point( i_mon.rcWork ),
+    nwnd_sz  = mon_sz;
+  } else if ( within_lhalf_range || within_rhalf_range ) {
+    nwnd_pos = {
+      within_lhalf_range ?
+        i_mon.rcWork.left : i_mon.rcWork.right - mon_sz.x / 2,
+      i_mon.rcWork.top
+    },
+    nwnd_sz = mon_sz;
+    nwnd_sz.x /= 2;
+  } else if( within_tcorner_range ) {
+    nwnd_pos = {
+      within_lcorner_range ?
+        i_mon.rcWork.left : i_mon.rcWork.right - mon_sz.x / 2,
+      i_mon.rcWork.top
+    };
+    nwnd_sz = mon_sz / 2;
+  } else if( within_bcorner_range ) {
+    nwnd_pos = {
+      within_lcorner_range ?
+        i_mon.rcWork.left : i_mon.rcWork.right - mon_sz.x / 2,
+      mon_sz.y / 2
+    };
+    nwnd_sz = mon_sz / 2;
+  }
+
   SetWindowPos( hwnd, 0,
-    i_mon.rcWork.left,
-    i_mon.rcWork.top,
-    mon_sz.x, mon_sz.y,
+    nwnd_pos.x, nwnd_pos.y,
+    nwnd_sz.x , nwnd_sz.y ,
     SWP_NOZORDER
   );
 }
-
-void wnd_drag_half( HWND hwnd, POINT m_pos ) {
-  POINT sm_pos;
-  GetCursorPos( &sm_pos );
-
-  HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
-  static HMONITOR pc_mon = nullptr;
-  static RECT pm_rect{};
-  static POINT monitor_offset{};
-
-  if( c_mon != pc_mon ) {
-    get_monitor_info( c_mon );
-    if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
-      pm_rect = i_mon.rcWork;
-      pc_mon = c_mon;
-      monitor_offset = to_pos_point( i_mon.rcWork );
-    }
-  }
-
-  get_monitor_info( pc_mon );
-  POINT mon_sz = to_sz_point( i_mon.rcWork ),
-       pmon_sz = to_sz_point( pm_rect ),
-    sm_pos_adj {
-      ( sm_pos.x < 0 ) ? sm_pos.x + pmon_sz.x : sm_pos.x,
-      sm_pos.y - monitor_offset.y
-  };
-
-  if( sm_pos.x > pmon_sz.x )
-    sm_pos_adj.x = sm_pos.x - ( pm_rect.right - mon_sz.x );
-
-  bool within_left  = ( sm_pos_adj.y > 20 &&
-                        sm_pos_adj.y < mon_sz.y - 20 &&
-                        sm_pos_adj.x <= 20 ),
-       within_right = ( sm_pos_adj.y > 20 &&
-                        sm_pos_adj.y < mon_sz.y - 20 &&
-                        sm_pos_adj.x > mon_sz.x - 20 );
-
-  if( !within_left && !within_right )
-    return;
-
-  is_maxd = true;
-
-  GetClientRect( hwnd, &max_prev_sz );
-
-  POINT wnd_ps {
-    within_left ?
-      i_mon.rcWork.left : i_mon.rcWork.right - mon_sz.x / 2,
-    i_mon.rcWork.top
-  };
-
-  SetWindowPos( hwnd, 0,
-    wnd_ps.x, wnd_ps.y,
-    mon_sz.x / 2, mon_sz.y,
-    SWP_NOZORDER
-  );
-}
-
-void wnd_drag_quart( HWND hwnd, POINT m_pos ) {
-  POINT sm_pos;
-  GetCursorPos( &sm_pos );
-
-  HMONITOR c_mon = MonitorFromPoint( sm_pos, MONITOR_DEFAULTTONEAREST );
-  static HMONITOR pc_mon = nullptr;
-  static RECT pm_rect{};
-  static POINT monitor_offset{};
-
-  if( c_mon != pc_mon ) {
-    get_monitor_info( c_mon );
-    if( !EqualRect( &i_mon.rcWork, &pm_rect ) ) {
-      pm_rect = i_mon.rcWork;
-      pc_mon = c_mon;
-      monitor_offset = to_pos_point( i_mon.rcWork );
-    }
-  }
-
-  get_monitor_info( pc_mon );
-  POINT mon_sz = to_sz_point( i_mon.rcWork ),
-       pmon_sz = to_sz_point( pm_rect ),
-    sm_pos_adj {
-    ( sm_pos.x < 0 ) ? sm_pos.x + pmon_sz.x : sm_pos.x,
-    sm_pos.y - monitor_offset.y
-  };
-
-  if( sm_pos.x > pmon_sz.x )
-    sm_pos_adj.x = sm_pos.x - ( pm_rect.right - mon_sz.x );
-
-  bool within_tl_range = ( sm_pos_adj.y <= 20 &&
-                           sm_pos_adj.x <= 20 ),
-       within_tr_range = ( sm_pos_adj.y <= 20 &&
-                           sm_pos_adj.x >= mon_sz.x - 20 ),
-       within_br_range = ( sm_pos_adj.y >= mon_sz.y - 20 &&
-                           sm_pos_adj.x >= mon_sz.x - 20 ),
-       within_bl_range = ( sm_pos_adj.y >= mon_sz.y - 20  &&
-                           sm_pos_adj.x <= 20 ),
-       within_range    = ( within_tl_range || within_tr_range ||
-                           within_bl_range || within_br_range );
-
-  if( !within_range )
-    return;
-
-  is_maxd = true;
-
-  GetClientRect( hwnd, &max_prev_sz );
-
-  if( within_tl_range ) {
-    SetWindowPos( hwnd, 0,
-      i_mon.rcWork.left,
-      i_mon.rcWork.top,
-      mon_sz.x / 2, mon_sz.y / 2,
-      SWP_NOZORDER
-    );
-  }
-  if( within_tr_range ) {
-    SetWindowPos( hwnd, 0,
-      i_mon.rcWork.right - mon_sz.x / 2,
-      i_mon.rcWork.top,
-      mon_sz.x / 2, mon_sz.y / 2,
-      SWP_NOZORDER
-    );
-  }
-  if( within_br_range ) {
-    SetWindowPos( hwnd, 0,
-      i_mon.rcWork.right - mon_sz.x / 2,
-      ( mon_sz.y / 2 ) + monitor_offset.y,
-      mon_sz.x / 2, mon_sz.y / 2,
-      SWP_NOZORDER
-    );
-  }
-  if( within_bl_range ) {
-    SetWindowPos( hwnd, 0,
-      i_mon.rcWork.left,
-      ( mon_sz.y / 2 ) + monitor_offset.y,
-      mon_sz.x / 2, mon_sz.y / 2,
-      SWP_NOZORDER
-    );
-  }
-}
-
-/* lordie forgive me, its temporaryryry ....
-
-void wnd_drag_common(HWND hwnd, POINT m_pos) {
-  POINT sm_pos;
-  GetCursorPos(&sm_pos);
-
-  HMONITOR c_mon = MonitorFromPoint(sm_pos, MONITOR_DEFAULTTONEAREST);
-  static HMONITOR pc_mon = nullptr;
-  static RECT pm_rect{};
-  static POINT monitor_offset{};
-
-  if (c_mon != pc_mon) {
-    get_monitor_info(c_mon);
-    if (!EqualRect(&i_mon.rcWork, &pm_rect)) {
-      pm_rect = i_mon.rcWork;
-      pc_mon = c_mon;
-      monitor_offset = to_pos_point(i_mon.rcWork);
-    }
-  }
-
-  get_monitor_info(pc_mon);
-  POINT mon_sz = to_sz_point(i_mon.rcWork),
-       pmon_sz = to_sz_point(pm_rect),
-    sm_pos_adj {
-      (sm_pos.x < 0) ? sm_pos.x + pmon_sz.x : sm_pos.x,
-      sm_pos.y - monitor_offset.y
-  };
-
-  if (sm_pos.x > pmon_sz.x)
-    sm_pos_adj.x = sm_pos.x - (pm_rect.right - mon_sz.x);
-
-  bool within_max_range = (sm_pos_adj.y <= i_mon.rcWork.top && sm_pos_adj.x > 20 && sm_pos_adj.x < mon_sz.x - 20);
-  bool within_half_range = (sm_pos_adj.y > 20 && sm_pos_adj.y < mon_sz.y - 20 && (sm_pos_adj.x <= 20 || sm_pos_adj.x >= mon_sz.x - 20));
-  bool within_quarter_range = (sm_pos_adj.y <= 20 && sm_pos_adj.x <= 20) || (sm_pos_adj.y <= 20 && sm_pos_adj.x >= mon_sz.x - 20) || (sm_pos_adj.y >= mon_sz.y - 20 && sm_pos_adj.x >= mon_sz.x - 20) || (sm_pos_adj.y >= mon_sz.y - 20 && sm_pos_adj.x <= 20);
-
-  if (within_max_range) {
-    is_maxd = true;
-    GetClientRect(hwnd, &max_prev_sz);
-    SetWindowPos(hwnd, 0, i_mon.rcWork.left, i_mon.rcWork.top, mon_sz.x, mon_sz.y, SWP_NOZORDER);
-  } else if (within_half_range) {
-    is_maxd = true;
-    GetClientRect(hwnd, &max_prev_sz);
-    POINT wnd_ps{(sm_pos_adj.x <= 20) ? i_mon.rcWork.left : i_mon.rcWork.right - mon_sz.x / 2, i_mon.rcWork.top};
-    SetWindowPos(hwnd, 0, wnd_ps.x, wnd_ps.y, mon_sz.x / 2, mon_sz.y, SWP_NOZORDER);
-  } else if (within_quarter_range) {
-    is_maxd = true;
-    GetClientRect(hwnd, &max_prev_sz);
-    if (sm_pos_adj.y <= 20 && sm_pos_adj.x <= 20) {
-      SetWindowPos(hwnd, 0, i_mon.rcWork.left, i_mon.rcWork.top, mon_sz.x / 2, mon_sz.y / 2, SWP_NOZORDER);
-    } else if (sm_pos_adj.y <= 20 && sm_pos_adj.x >= mon_sz.x - 20) {
-      SetWindowPos(hwnd, 0, i_mon.rcWork.right - mon_sz.x / 2, i_mon.rcWork.top, mon_sz.x / 2, mon_sz.y / 2, SWP_NOZORDER);
-    } else if (sm_pos_adj.y >= mon_sz.y - 20 && sm_pos_adj.x >= mon_sz.x - 20) {
-      SetWindowPos(hwnd, 0, i_mon.rcWork.right - mon_sz.x / 2, (mon_sz.y / 2) + monitor_offset.y, mon_sz.x / 2, mon_sz.y / 2, SWP_NOZORDER);
-    } else if (sm_pos_adj.y >= mon_sz.y - 20 && sm_pos_adj.x <= 20) {
-      SetWindowPos(hwnd, 0, i_mon.rcWork.left, (mon_sz.y / 2) + monitor_offset.y, mon_sz.x / 2, mon_sz.y / 2, SWP_NOZORDER);
-    }
-  }
-}
-
-*/

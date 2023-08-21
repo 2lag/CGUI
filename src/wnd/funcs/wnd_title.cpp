@@ -30,7 +30,7 @@ TextOutW( hdc, obj[ idx ].r.right - xoff, obj[ idx ].r.bottom - yoff, txt, 1 )
     if_idx_draw_txt( 5, L"O", 17, 20 );
     if_idx_draw_txt( 7, L"_", 16, 25 );
   }
-  TextOutW( hdc, 6, 4, L"Type", 4 );
+  TextOutW( hdc, 6, 4, L"CGUI", 4 );
 
   for( auto& it : obj )
     DeleteObject( it.col );
