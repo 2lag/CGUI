@@ -1,7 +1,7 @@
 #include "wnd_title.h"
 
 void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz ) {
-  wnd_obj obj[] = {
+  WND_OBJ obj[] = {
     wnd_obj_create( {                 0, 0, wnd_sz.right     , 25 }, COL_L_GRY, false ),
     wnd_obj_create( {                 0, 0, wnd_sz.right     , 24 }, COL_D_GRY, false ),
     wnd_obj_create( { wnd_sz.right - 25, 0, wnd_sz.right     , 25 }, COL_L_GRY, true  ),
@@ -21,14 +21,28 @@ void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz ) {
       ++idx;
       FillRect( hdc, &obj[ idx ].r, obj[ idx ].col );
     }
-
-#define if_idx_draw_txt( val, txt, xoff, yoff ) \
-if( idx == val ) \
-TextOutW( hdc, obj[ idx ].r.right - xoff, obj[ idx ].r.bottom - yoff, txt, 1 )
-
-    if_idx_draw_txt( 3, L"X", 16, 20 );
-    if_idx_draw_txt( 5, L"O", 17, 20 );
-    if_idx_draw_txt( 7, L"_", 16, 25 );
+    
+    POINT offset{};
+    LPCWSTR txt = L"";
+    switch( idx ) {
+    case 3:
+      offset = { 16, 20 };
+      txt = L"X";
+      break;
+    case 5:
+      offset = { 17, 20 };
+      txt = L"O";
+      break;
+    case 7:
+      offset = { 16, 25 };
+      txt = L"_";
+      break;
+    }
+    TextOutW( hdc,
+      obj[ idx ].r.right  - offset.x,
+      obj[ idx ].r.bottom - offset.y,
+      txt, 1
+    );
   }
   TextOutW( hdc, 6, 4, L"CGUI", 4 );
 

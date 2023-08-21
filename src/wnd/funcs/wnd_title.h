@@ -1,18 +1,14 @@
 #pragma once
 #include "../wincludes.h"
 
-struct wnd_obj {
+struct WND_OBJ {
   RECT r;
   HBRUSH col;
   bool next;
 };
 
-inline wnd_obj wnd_obj_create( RECT r, COLORREF col, bool next ) {
-  wnd_obj obj;
-  obj.r = r;
-  obj.col = CreateSolidBrush( col );
-  obj.next = next;
-  return obj;
+inline WND_OBJ wnd_obj_create( RECT r, COLORREF col, bool next ) {
+  return { r, CreateSolidBrush( col ), next };
 }
 
 void wnd_title_draw( HDC hdc, POINT m_pos, RECT wnd_sz );

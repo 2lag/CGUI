@@ -98,33 +98,23 @@ void wnd_drag_resize( HWND hwnd, POINT m_pos ) {
     sm_pos_adj.x = sm_pos.x - ( pm_rect.right - mon_sz.x );
 
   // lord forgive me
-  bool within_max_range = ( sm_pos_adj.y <= i_mon.rcWork.top &&
-                            sm_pos_adj.x > 20                &&
-                            sm_pos_adj.x < mon_sz.x - 20     ),
-     within_lhalf_range = ( sm_pos_adj.y > 20                &&
-                            sm_pos_adj.y < mon_sz.y - 20     &&
-                            sm_pos_adj.x <= 20               ),
-     within_rhalf_range = ( sm_pos_adj.y > 20                &&
-                            sm_pos_adj.y < mon_sz.y - 20     &&
-                            sm_pos_adj.x >= mon_sz.x - 20    ),
-   within_lcorner_range = ( ( sm_pos_adj.y <= 20             ||
-                            sm_pos_adj.y >= mon_sz.y - 20  ) &&
-                            sm_pos_adj.x <= 20               ),
-   within_tcorner_range = ( ( sm_pos_adj.x <= 20             ||
-                            sm_pos_adj.x >= mon_sz.x - 20  ) &&
-                            sm_pos_adj.y <= 20               ),
-   within_rcorner_range = ( ( sm_pos_adj.y <= 20             ||
-                            sm_pos_adj.y >= mon_sz.y - 20  ) &&
-                            sm_pos_adj.x >= mon_sz.x - 20    ),
-   within_bcorner_range = ( ( sm_pos_adj.x <= 20             ||
-                            sm_pos_adj.x >= mon_sz.x - 20  ) &&
-                            sm_pos.y >= mon_sz.y - 20        ),
-           within_range =  within_max_range                  ||
-                           within_lhalf_range                ||
-                           within_rhalf_range                ||
-                           within_lcorner_range              ||
-                           within_tcorner_range              ||
-                           within_rcorner_range              ||
+  bool m_in_lxr = sm_pos_adj.x < mon_sz.x * 0.1f,
+       m_in_rxr = sm_pos_adj.x > mon_sz.x * 0.9f,
+       m_in_tyr = sm_pos_adj.y < mon_sz.y * 0.1f,
+       m_in_byr = sm_pos_adj.y > mon_sz.y * 0.9f,
+       within_max_range = sm_pos_adj.y <= i_mon.rcWork.top && !m_in_lxr && !m_in_rxr,
+     within_lhalf_range = sm_pos_adj.x <= mon_sz.x * 0.01f && !m_in_tyr && !m_in_byr,
+     within_rhalf_range = sm_pos_adj.x >= mon_sz.x * 0.99f && !m_in_tyr && !m_in_byr,
+   within_lcorner_range = ( m_in_tyr || m_in_byr ) && m_in_lxr,
+   within_rcorner_range = ( m_in_tyr || m_in_byr ) && m_in_rxr,
+   within_tcorner_range = ( m_in_lxr || m_in_rxr ) && m_in_tyr,
+   within_bcorner_range = ( m_in_lxr || m_in_rxr ) && m_in_byr,
+           within_range =  within_max_range     ||
+                           within_lhalf_range   ||
+                           within_rhalf_range   ||
+                           within_lcorner_range ||
+                           within_tcorner_range ||
+                           within_rcorner_range ||
                            within_bcorner_range;
 
   if( !within_range )
