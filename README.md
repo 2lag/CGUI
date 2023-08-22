@@ -11,6 +11,5 @@
 | wnd_func.cpp | wndproc |
 | wnd_drag.cpp | any/all drag functionality |
 | wnd_resize.cpp | any/all resize functionality |
-| wnd_drag.cpp | any/all drag functionality |
 | wnd_title.cpp | title bar rendering/functionality |
 | wnd_tps.cpp | tps calculation/rendering |
