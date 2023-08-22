@@ -1,8 +1,7 @@
 # CGUI
 ![image](https://github.com/2lag/CGUI/assets/96544487/0cea45c6-e046-4c4d-bd4f-5dfbdcf58c86)<br><br><br>
 ##### todo :
- - fix resize/drag bounds conflicting
- - fix y pos offset to work with drag_resize maximized case<br><br>
+ - find bugs<br><br>
 ## code location :
 | file  | contains |
 | ------------- | ------------- |
